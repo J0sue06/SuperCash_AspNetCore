@@ -1,16 +1,30 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using SuperCash.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SuperCash.Hubs
 {
     public class ChatHub: Hub
-    {
-        public async Task SendMessage(string user, string message)
+    {    
+        public override Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            ConnectedUsers.Connectados.Add(Context.ConnectionId);
+            Console.WriteLine("Conectado", Context.ConnectionId);
+            return base.OnConnectedAsync();
         }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {           
+            ConnectedUsers.Connectados.Remove(Context.ConnectionId);
+            return base.OnDisconnectedAsync(exception);
+        }
+
+
     }
 }

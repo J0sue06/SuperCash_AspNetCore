@@ -22,6 +22,8 @@ namespace SuperCash.Controllers
 
         public async Task<IActionResult> Acceso(LoginViewModel model)
         {
+            Respuesta _return = new Respuesta();
+
             if (ModelState.IsValid)
             {
                 using (supercashContext db = new supercashContext())
@@ -31,33 +33,35 @@ namespace SuperCash.Controllers
                                 select new
                                 {
                                     u.Id,
-                                    u.Email,
-                                    u.NivelDirecto,
-                                    u.NivelEquipo,
-                                    u.Rango,
-                                    u.Balance,
-                                    u.GananciaDirecta,
-                                    u.GananciaEquipo,
-                                    u.Acceso                                   
+                                    u.Acceso,
+                                    u.Email
                                 }).FirstOrDefault();
 
                     if (user != null)
-                    {
-                        //Session
+                    {                        
                         var claims = new List<Claim>();
-                        claims.Add(new Claim(ClaimTypes.Name, Convert.ToString(user.Id) ));
+                        claims.Add(new Claim("ID", user.Id.ToString() ));
+                        claims.Add(new Claim("Email", user.Email.ToString()) );
+                        claims.Add(new Claim("Acceso", user.Acceso.ToString()));
                         var claimIdenties = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var claimPrincipal = new ClaimsPrincipal(claimIdenties);
-                        var authenticationManager = Request.HttpContext;
+                        var authenticationManager = Request.HttpContext;                      
 
-                        await authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal, new AuthenticationProperties() { IsPersistent = true });
+                        await authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal, new AuthenticationProperties() { IsPersistent = false });
 
-                        var res = User.Identity.Name;
+                        _return.Status = 200;
+                        var res = claimIdenties.Claims;
 
+                        return Ok(_return);
+                    }
+                    else
+                    {
+                        _return.Status = 400;
+
+                        return Ok(_return);
                     }
                 }
-
-                return Ok(User.Identity.Name);
+                
             }
             else
             {                

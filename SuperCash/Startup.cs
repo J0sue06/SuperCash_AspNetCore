@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -32,6 +33,9 @@ namespace SuperCash
             services.AddControllersWithViews();
             services.AddSignalR();
 
+            services.AddDbContext<supercashContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("trabajo")));
+
             services.AddAuthentication(options =>
             {
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -40,7 +44,7 @@ namespace SuperCash
             }).AddCookie(options =>
             {
                 options.LoginPath = new PathString("/Login");
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
+                options.ExpireTimeSpan = TimeSpan.FromHours(2);
             });
         }
 
@@ -84,6 +88,14 @@ namespace SuperCash
                     await next.Invoke();
                 }
             });
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chatHub/deposito");
+                //routes.MapHub<YourHubClass2>("/hub/test2");
+            });
+
+
         }
     }
 }

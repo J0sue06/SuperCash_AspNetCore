@@ -1,29 +1,83 @@
-﻿"use strict";
+﻿
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+$(document).ready(() => {
+    let connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+    
 
-//Disable send button until connection is established
-document.getElementById("sendButton").disabled = true;
+    connection.on("Deposito", function (res) {
+        $('#totalGanancias').html(`${res} TX`);
+        //console.log(res);
+    });
 
-connection.on("ReceiveMessage", function (user, message) {
-    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    var encodedMsg = user + " says " + msg;
-    var li = document.createElement("li");
-    li.textContent = encodedMsg;
-    document.getElementById("messagesList").appendChild(li);
-});
-
-connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-});
-
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
-    var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", user, message).catch(function (err) {
+    connection.start().then(function () {
+        console.log("Socket Conectado");
+    }).catch(function (err) {
         return console.error(err.toString());
     });
-    event.preventDefault();
+
+    $("#deposit").click(function (e) {
+        e.preventDefault();
+
+        const _monto = $('#MontoDeposito').val();
+
+        if (_monto == '') {
+            return;
+        }
+
+        Swal.fire({
+            title: '¿Estas seguro?',
+            text: `Realmente quieres hacer un deposito por ${_monto} BTC`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, hazlo!'            
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const obj = {
+                    monto: _monto
+                };
+
+                $.ajax({
+                    url: '/Transacciones/Deposito',
+                    method: 'POST',
+                    data: { model: obj },
+                    success: (res) => {
+                        console.log(res);
+                    },
+                    error: (err) => {
+                        console.error(err);
+                    }
+                });
+
+            }
+        });
+
+    });
+
+    $("#buyLincense").click(function (e) {
+        e.preventDefault();
+        Valor++;
+
+        //$.ajax({
+        //    url: '/Transacciones/Deposito',
+        //    method: 'POST',
+        //    data: { monto: '' },
+        //    success: (res) => {
+        //        console.log(res);
+        //    },
+        //    error: (err) => {
+        //        console.error(err);
+        //    }
+        //});
+
+
+    });
+
+
+
 });
+
+
+

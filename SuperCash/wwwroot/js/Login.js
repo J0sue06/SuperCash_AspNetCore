@@ -15,6 +15,10 @@ $(document).ready(()=>{
             method: 'POST',
             data: { model: obj },
             success: (res) => {
+                const { status } = res;
+                if (status == 200) {
+                    document.location.href = "/Home";
+                }
                 console.log(res);
             },
             error: (err) => {                

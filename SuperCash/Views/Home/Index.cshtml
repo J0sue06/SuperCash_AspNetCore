@@ -1,219 +1,256 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var conectados = ViewBag.IdsConnected;
+    var infoUser = ViewBag.Informaciones.Value;
+    var idUser = ViewBag.IDUser;
 }
-  
-        <!--component-->
-        <div class="dash d-flex flex-col mx-auto responsive-width primary-bg">
-            <div class=" row d-flex justify-content-start small-side-padding mt-5 mb-5 rounded">
-                <div class="user-briefing d-flex">
-                    <div class="icon">                        
-                        <img src="~/img/profile-user.png" alt="user icon"/>
-                    </div>
-                    <div class="id d-flex flex-col pr-22">
-                        <h3 class="mb-0 switch-font">ID</h3>
-                        <h2 class="color-primary">1</h2>
-                    </div>
-                    <div class="rank d-flex flex-col pr-22">
-                        <h3 class="mb-0 switch-font">Rank</h3>
-                        <h2 class="bold-2">Corporate II</h2>
-                    </div>
-                </div>
-                <div class="d-flex flex-col pr-22">
-                    <h3 class="mb-0 switch-font">Balance</h3>
-                    <h2 class="color-primary">25,537 TRX</h2>
-                </div>
-            </div>
-            <div class="dash-section row mb-5">
-                <div class="col-lg-7 flex-col">
-                    <h2 class="bold small-side-padding switch-font">My affiliate licenses</h2>
-                    <!--div para comprar licencias-->
-                    <div id="non-licensed-user" class="licenses-wrap mb-5 row small-side-padding">
-                        <div class="col-lg-12 license ">
-                            <div class="buy-license-cta">
-                                <h2>You're just one step from making money</h2>
-                                <h3>Get your official license and let the fun begin!</h3>
-                                <div class="buy-license-button-wrap">
-                                    <button class="btn btn-success width-100 mb-2">I want to buy my license</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--cuando las licencias ya estan compradas-->
-                    <div id="licensed-user" class="licenses-wrap row small-side-padding">
-                        <div class="license col-lg-6">
-                            <div class="d-flex rounded full-height flex-col third-bg license-inner">
-                                <div class="d-flex license-type-and-level justify-content-between">
-                                    <div class="license-type switch-font">
-                                        <h3>DIRECT</h3>
-                                        <h4>80% COMMISSION</h4>
-                                        <br>
-                                    </div>
-                                    <div class="license-level d-flex align-items-end flex-col switch-font">
-                                        <h3>LEVEL 1</h3>
-                                        <button>Upgrade</button>
-                                    </div>
-                                </div>
-                                <div class="d-flex license-price full-height">
-                                    <div class="price full-height">
-                                        <h1>200 <span class="minified">TRX</span></h1>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="license rounded col-lg-6">
-                            <div class="d-flex rounded full-height flex-col third-bg license-inner">
-                                <div class="d-flex license-type-and-level justify-content-between">
-                                    <div class="license-type switch-font">
-                                        <h3>TEAM</h3>
-                                        <h4>20% COMMISSION</h4>
-                                        <h4>x 4 LEVELS</h4>
-                                    </div>
-                                    <div class="license-level d-flex align-items-end flex-col switch-font">
-                                        <h3>LEVEL 1</h3>
-                                        <button>Upgrade</button>
-                                    </div>
-                                </div>
-                                <div class="d-flex license-price full-height">
-                                    <div class="price full-height">
-                                        <h1>200 <span class="minified">TRX</span></h1>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <h3 class="small-side-padding">My affiliate link: <a href="#">https://thislink/ref?=45 <i class="bi bi-files"></i></a></h3>
-                    <hr id="vertical-screen-divisor">
-                </div>
-                <div class="col-lg-5 small-side-padding">
-                    <h2 class="bold switch-font small-side-padding">Total earnings</h2>
-                    <div class="earnings-history mb-4 small-side-padding">
-                        <h1 class="mb-0 accent">256,890 TRX</h1>
-                        <h3 class="subtle">USD$45,000</h3>
-                    </div>
-                    <div class="direct-and-team row mb-4 small-side-padding">
-                        <div class="col-xs-6 pr-22">
-                            <h3 class="mb-0">Direct</h3>
-                            <h3 class="accent">56,977 TRX</h3>
-                        </div>
-                        <div class="col-xs-6">
-                            <h3 class="mb-0">Team</h3>
-                            <h3 class="accent">176,267 TRX</h3>
-                        </div>
-                    </div>
-                    <div class="buttons row small-side-padding">
-                        <div class="col-lg-6 pr-15">
-                            <button class="btn btn-success width-100 mb-2">Deposit</button>
-                        </div>
-                        <div class="col-lg-6 pr-15">
-                            <button class="btn btn-outline-success width-100">Withdraw</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--component end-->
-        <!--component-->
-        <div class="complementary responsive-width mx-auto">
-            <div class="d-flex row mt-5">
-                <div class="col-lg-7  mb-4">
-                    <div class="complementary-info-wrap secondary-bg d-flex full-height flex-col">
-                        <div class="d-flex justify-content-between align-items-center small-side-padding">
-                            <h2 class="bold switch-font">My affiliates</h2>
-                            <a class="" href="#">
-                                View all
-                                <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
-                        <div class="affiliate-info-wrap row small-side-padding">
-                            <div class="col-lg-3">
-                                <h3>Direct</h3>
-                                <div class="direct-affiliates d-flex align-items-center">
-                                    <i class="bi bi-person"></i>
-                                    <h1 class="accent">216</h1>
-                                </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <h3>Team</h3>
-                                <div class="direct-affiliates d-flex align-items-center">
-                                    <i class="bi bi-people"></i>
-                                    <h1 class="accent">789</h1>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <h3>Top members</h3>
-                                <div class="top-members-list">
-                                    <table class="table table-borderless table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th class="text-right" scope="col">Earned (TRX)</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">89</th>
-                                                <td class="text-right">156,000 TRX</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">114</th>
-                                                <td class="text-right">89,780 TRX</td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">39</th>
-                                                <td class="text-right">38,550 TRX</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-5 secondary-bg  mb-4">
-                    <div class="d-flex justify-content-between align-items-center small-side-padding">
-                        <h2 class="bold switch-font">Recent payments</h2>
-                        <a class="" href="#">
-                            View all
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                    <h3 class="subtle small-side-padding ">See where your commission is coming from</h3>
-                    <div class="recent-payment-list small-side-padding">
-                        <table class="table table-borderless table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Amount</th>
-                                    <th>Type</th>
-                                    <th class="text-right" scope="col">ID</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">12,600 TRX</th>
-                                    <td>Team member</td>
-                                    <td class="text-right">456</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">8,400 TRX</th>
-                                    <td>Direct</td>
-                                    <td class="text-right">79</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">12,600 TRX</th>
-                                    <td>Direct</td>
-                                    <td class="text-right">724</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">6,300 TRX</th>
-                                    <td>Direct</td>
-                                    <td class="text-right">322</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
 
+<!--component-->
+<div class="dash d-flex flex-col mx-auto responsive-width primary-bg">
+    <div class=" row d-flex justify-content-start small-side-padding mt-5 mb-5 rounded">
+        <div class="user-briefing d-flex">
+            <div class="icon">
+                <img src="~/img/profile-user.png" alt="user icon" />
+            </div>
+            <div class="id d-flex flex-col pr-22">
+                <h3 class="mb-0 switch-font">ID</h3>
+                <h2 class="color-primary">@idUser</h2>
+            </div>
+            <div class="rank d-flex flex-col pr-22">
+                <h3 class="mb-0 switch-font">Rank</h3>
+                <h2 class="bold-2">@infoUser[0].Rango</h2>
+            </div>
+        </div>
+        <div class="d-flex flex-col pr-22">
+            <h3 class="mb-0 switch-font">Balance</h3>
+            <h2 class="color-primary">@infoUser[0].Balance TRX</h2>
+        </div>
+        <div class="d-flex flex-col pr-22">
+            <ul>
+                @foreach (var item in conectados)
+                {
+                    <li>@item</li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="dash-section row mb-5">
+        <div class="col-lg-7 flex-col">
+            <h2 class="bold small-side-padding switch-font">My affiliate licenses</h2>
+            <!--div para comprar licencias-->
+            <div id="non-licensed-user" class="licenses-wrap mb-5 row small-side-padding">
+                <div class="col-lg-12 license ">
+                    <div class="buy-license-cta">
+                        <h2>You're just one step from making money</h2>
+                        <h3>Get your official license and let the fun begin!</h3>
+                        <div class="buy-license-button-wrap">
+                            <button class="btn btn-success width-100 mb-2">I want to buy my license</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--cuando las licencias ya estan compradas-->
+            <div id="licensed-user" class="licenses-wrap row small-side-padding">
+                <div class="license col-lg-6">
+                    <div class="d-flex rounded full-height flex-col third-bg license-inner">
+                        <div class="d-flex license-type-and-level justify-content-between">
+                            <div class="license-type switch-font">
+                                <h3>DIRECT</h3>
+                                <h4>80% COMMISSION</h4>
+                                <br>
+                            </div>
+                            <div class="license-level d-flex align-items-end flex-col switch-font">
+                                <h3>LEVEL 1</h3>
+                                <button>Upgrade</button>
+                            </div>
+                        </div>
+                        <div class="d-flex license-price full-height">
+                            <div class="price full-height">
+                                <h1>200 <span class="minified">TRX</span></h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="license rounded col-lg-6">
+                    <div class="d-flex rounded full-height flex-col third-bg license-inner">
+                        <div class="d-flex license-type-and-level justify-content-between">
+                            <div class="license-type switch-font">
+                                <h3>TEAM</h3>
+                                <h4>20% COMMISSION</h4>
+                                <h4>x 4 LEVELS</h4>
+                            </div>
+                            <div class="license-level d-flex align-items-end flex-col switch-font">
+                                <h3>LEVEL 1</h3>
+                                <button>Upgrade</button>
+                            </div>
+                        </div>
+                        <div class="d-flex license-price full-height">
+                            <div class="price full-height">
+                                <h1>200 <span class="minified">TRX</span></h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h3 class="small-side-padding">My affiliate link: <a href="#">https://thislink/ref?=45 <i class="bi bi-files"></i></a></h3>
+            <hr id="vertical-screen-divisor">
+        </div>
+        <div class="col-lg-5 small-side-padding">
+            <h2 class="bold switch-font small-side-padding">Total earnings</h2>
+            <div class="earnings-history mb-4 small-side-padding">
+                <h1 class="mb-0 accent" id="totalGanancias">@infoUser[0].GananciaTotal TRX</h1>
+                <h3 class="subtle">USD$45,000</h3>
+            </div>
+            <div class="direct-and-team row mb-4 small-side-padding">
+                <div class="col-xs-6 pr-22">
+                    <h3 class="mb-0">Direct</h3>
+                    <h3 class="accent">@infoUser[0].GananciaDirecta TRX</h3>
+                </div>
+                <div class="col-xs-6">
+                    <h3 class="mb-0">Team</h3>
+                    <h3 class="accent">@infoUser[0].GananciaEquipo TRX</h3>
+                </div>
+            </div>
+            <div class="buttons row small-side-padding">
+                <div class="col-lg-6 pr-15">
+                    <button class="btn btn-success width-100 mb-2" data-toggle="modal" data-target="#modalDepositos">Deposit</button>
+                </div>
+                <div class="col-lg-6 pr-15">
+                    <button class="btn btn-outline-success width-100">Withdraw</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--component end-->
+<!--component-->
+<div class="complementary responsive-width mx-auto">
+    <div class="d-flex row mt-5">
+        <div class="col-lg-7  mb-4">
+            <div class="complementary-info-wrap secondary-bg d-flex full-height flex-col">
+                <div class="d-flex justify-content-between align-items-center small-side-padding">
+                    <h2 class="bold switch-font">My affiliates</h2>
+                    <a class="" href="#">
+                        View all
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="affiliate-info-wrap row small-side-padding">
+                    <div class="col-lg-3">
+                        <h3>Direct</h3>
+                        <div class="direct-affiliates d-flex align-items-center">
+                            <i class="bi bi-person"></i>
+                            <h1 class="accent">216</h1>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <h3>Team</h3>
+                        <div class="direct-affiliates d-flex align-items-center">
+                            <i class="bi bi-people"></i>
+                            <h1 class="accent">789</h1>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <h3>Top members</h3>
+                        <div class="top-members-list">
+                            <table class="table table-borderless table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th class="text-right" scope="col">Earned (TRX)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">89</th>
+                                        <td class="text-right">156,000 TRX</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">114</th>
+                                        <td class="text-right">89,780 TRX</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">39</th>
+                                        <td class="text-right">38,550 TRX</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 secondary-bg  mb-4">
+            <div class="d-flex justify-content-between align-items-center small-side-padding">
+                <h2 class="bold switch-font">Recent payments</h2>
+                <a class="" href="#">
+                    View all
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <h3 class="subtle small-side-padding ">See where your commission is coming from</h3>
+            <div class="recent-payment-list small-side-padding">
+                <table class="table table-borderless table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Amount</th>
+                            <th>Type</th>
+                            <th class="text-right" scope="col">ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">12,600 TRX</th>
+                            <td>Team member</td>
+                            <td class="text-right">456</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">8,400 TRX</th>
+                            <td>Direct</td>
+                            <td class="text-right">79</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">12,600 TRX</th>
+                            <td>Direct</td>
+                            <td class="text-right">724</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">6,300 TRX</th>
+                            <td>Direct</td>
+                            <td class="text-right">322</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*MODAL DEPOSITOS*@
+<div class="modal fade" id="modalDepositos" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title">Depositos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Introduzca la cantidad a depositar.</label>
+                <input type="number" id="MontoDeposito" class="col-4" />
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="deposit">Realizar Deposito</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="~/js/Chat.js"></script>

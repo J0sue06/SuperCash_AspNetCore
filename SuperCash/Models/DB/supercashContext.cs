@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 #nullable disable
 
@@ -8,13 +9,17 @@ namespace SuperCash.Models
 {
     public partial class supercashContext : DbContext
     {
+        private readonly IConfiguration _configuration;
+
         public supercashContext()
         {
+            //_configuration = configuration;
         }
 
-        public supercashContext(DbContextOptions<supercashContext> options)
+        public supercashContext(DbContextOptions<supercashContext> options, IConfiguration configuration)
             : base(options)
         {
+            _configuration = configuration;
         }
 
         public virtual DbSet<NivelesDirecto> NivelesDirectos { get; set; }
@@ -27,8 +32,13 @@ namespace SuperCash.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=DESKTOP-6JUMSB9\\SQLEXPRESS; Database=supercash;User ID=adminp; password=M@ster123;");
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.json")
+                .Build();
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("trabajo"));
+
+                //optionsBuilder.UseSqlServer("Server=DESKTOP-6JUMSB9\\SQLEXPRESS; Database=supercash;User ID=adminp; password=M@ster123;");
             }
         }
 
