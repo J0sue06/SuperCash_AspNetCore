@@ -1,0 +1,63 @@
+
+
+CREATE TABLE usuarios
+(
+	id int primary key identity,
+	id_padre int,
+	email varchar(145),
+	clave varchar(145),
+	wallet varchar(50),
+	ganancia_directa float,
+	ganancia_equipo float,
+	balance float,
+	rango varchar(95),
+	nivel_directo int,
+	nivel_equipo int,
+	primera_compra int,
+	fecha_registro date,
+	acceso int
+);
+
+GO
+
+CREATE TABLE pagos
+(
+	id int primary key identity,
+	id_usuario int,
+	id_padre int,
+	monto_trx float,
+	tipo_pago varchar(95),
+	fecha datetime
+);
+
+GO
+
+CREATE TABLE transacciones 
+(
+	id int primary key identity,
+	id_usuario int,
+	monto_btc float,
+	monto_trx float,
+	fecha datetime,
+	estado varchar(95)
+);
+
+GO
+
+CREATE TABLE niveles_directo
+(
+	id int primary key identity,
+	nivel int,
+	ganancia int,
+	costo int
+);
+
+GO
+
+CREATE TABLE niveles_equipos
+(
+	id int primary key identity,
+	nivel int,
+	ganancia int,
+	costo int
+);
