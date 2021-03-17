@@ -12,6 +12,6 @@ namespace SuperCash.Models
         public int? IdPadre { get; set; }
         public double? MontoTrx { get; set; }
         public string TipoPago { get; set; }
-        public DateTime? Fecha { get; set; }
+        public DateTime Fecha { get; set; }
     }
 }

@@ -14,14 +14,15 @@ namespace SuperCash.Hubs
     {    
         public override Task OnConnectedAsync()
         {
-            ConnectedUsers.Connectados.Add(Context.ConnectionId);
-            Console.WriteLine("Conectado", Context.ConnectionId);
+            ConnectedUsers.Connectado = Context.ConnectionId;
+            Console.WriteLine("Usuario conectado ID " + ConnectedUsers.Connectado);
             return base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
-        {           
-            ConnectedUsers.Connectados.Remove(Context.ConnectionId);
+        {
+            Console.WriteLine("Usuario Id " + Context.ConnectionId + " desconectado");
+            ConnectedUsers.Connectado = string.Empty;      
             return base.OnDisconnectedAsync(exception);
         }
 

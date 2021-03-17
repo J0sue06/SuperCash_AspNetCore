@@ -3,6 +3,8 @@
     var conectados = ViewBag.IdsConnected;
     var infoUser = ViewBag.Informaciones.Value;
     var idUser = ViewBag.IDUser;
+    var _balance = ViewBag.Balance;
+    var _pagos = ViewBag.Pagos.Value;
 }
 
 <!--component-->
@@ -14,7 +16,7 @@
             </div>
             <div class="id d-flex flex-col pr-22">
                 <h3 class="mb-0 switch-font">ID</h3>
-                <h2 class="color-primary">@idUser</h2>
+                <h2 class="color-primary" id="ID">@idUser</h2>
             </div>
             <div class="rank d-flex flex-col pr-22">
                 <h3 class="mb-0 switch-font">Rank</h3>
@@ -23,15 +25,10 @@
         </div>
         <div class="d-flex flex-col pr-22">
             <h3 class="mb-0 switch-font">Balance</h3>
-            <h2 class="color-primary" id="Balance">@infoUser[0].Balance TRX</h2>
+            <h2 class="color-primary" id="Balance">@_balance TRX</h2>
         </div>
-        <div class="d-flex flex-col pr-22">
-            <ul>
-                @foreach (var item in conectados)
-                {
-                    <li>@item</li>
-                }
-            </ul>
+        <div class="d-flex flex-col pr-22" id="UsersOnline">
+            
         </div>
     </div>
     <div class="dash-section row mb-5">
@@ -64,13 +61,13 @@
                                     <br>
                                 </div>
                                 <div class="license-level d-flex align-items-end flex-col switch-font">
-                                    <h3>LEVEL 1</h3>
-                                    <button>Upgrade</button>
+                                    <h3>LEVEL @infoUser[0].nivelDirecto</h3>
+                                    <button type="button" id="UpgradeDirect">Upgrade</button>
                                 </div>
                             </div>
                             <div class="d-flex license-price full-height">
                                 <div class="price full-height">
-                                    <h1>200 <span class="minified">TRX</span></h1>
+                                    <h1>@infoUser[0].gananciaDirecto <span class="minified">TRX</span></h1>
                                 </div>
                             </div>
                         </div>
@@ -84,20 +81,20 @@
                                     <h4>x 4 LEVELS</h4>
                                 </div>
                                 <div class="license-level d-flex align-items-end flex-col switch-font">
-                                    <h3>LEVEL 1</h3>
+                                    <h3>LEVEL @infoUser[0].nivelEquipo</h3>
                                     <button>Upgrade</button>
                                 </div>
                             </div>
                             <div class="d-flex license-price full-height">
                                 <div class="price full-height">
-                                    <h1>200 <span class="minified">TRX</span></h1>
+                                    <h1>@infoUser[0].gananciaEquipo <span class="minified">TRX</span></h1>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <h3 class="small-side-padding">My affiliate link: <a href="#">https://thislink/ref?=45 <i class="bi bi-files"></i></a></h3>
+                <h3 class="small-side-padding">My affiliate link: <a href="#">https://thislink/ref?=@idUser <i class="bi bi-files"></i></a></h3>
             }
 
             <hr id="vertical-screen-divisor">
@@ -197,37 +194,37 @@
             </div>
             <h3 class="subtle small-side-padding ">See where your commission is coming from</h3>
             <div class="recent-payment-list small-side-padding">
-                <table class="table table-borderless table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">Amount</th>
-                            <th>Type</th>
-                            <th class="text-right" scope="col">ID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">12,600 TRX</th>
-                            <td>Team member</td>
-                            <td class="text-right">456</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">8,400 TRX</th>
-                            <td>Direct</td>
-                            <td class="text-right">79</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">12,600 TRX</th>
-                            <td>Direct</td>
-                            <td class="text-right">724</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">6,300 TRX</th>
-                            <td>Direct</td>
-                            <td class="text-right">322</td>
-                        </tr>
-                    </tbody>
-                </table>
+
+
+                @if (_pagos.Count > 0)
+                {
+                    <table class="table table-borderless table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Amount</th>
+                                <th>Type</th>
+                                <th class="text-right" scope="col">ID</th>
+                                <th class="text-right" scope="col">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody id="PayList">
+                            @foreach (var _p in _pagos)
+                            {
+                                <tr>
+                                    <th scope="row">@_p.MontoTrx TRX</th>
+                                    <td>@_p.TipoPago</td>
+                                    <td class="text-right">@_p.IdUsuario</td>
+                                    <td class="text-right">@_p.Fecha</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <h2>Aun no tienes pagos!</h2>
+                }
+
             </div>
         </div>
     </div>

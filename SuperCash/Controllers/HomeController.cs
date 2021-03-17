@@ -11,6 +11,7 @@ using SuperCash.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -37,17 +38,14 @@ namespace SuperCash.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            await VerificarDepositos2();
+
             var res = User.Claims.ToList();
-            var ID = res[0].Value;           
+            var ID = res[0].Value;  
 
-            foreach (var item in ConnectedUsers.Connectados)
-            {
-                await _hub.Clients.Clients(item).SendAsync("Hola", "Mensaje");
-            }
+            var result = Informaciones(Convert.ToInt32(ID));            
 
-            var result = Informaciones(Convert.ToInt32(ID));
-
-            ViewBag.IdsConnected = ConnectedUsers.Connectados;
+            //ViewBag.IdsConnected = ConnectedUsers.Connectados;
             ViewBag.Informaciones = result;
             ViewBag.IDUser = ID;
 
@@ -59,81 +57,71 @@ namespace SuperCash.Controllers
             using (supercashContext db = new supercashContext())
             {
                 var datosUser = (from u in db.Usuarios
+                                 join d in db.NivelesDirectos on u.NivelDirecto equals d.Nivel
+                                 join e in db.NivelesEquipos on u.NivelEquipo equals e.Nivel
                                  where u.Id == ID
                                  select new
                                  {
                                      u.Rango,
                                      u.NivelDirecto,
-                                     u.NivelEquipo,
-                                     u.Balance,
+                                     u.NivelEquipo,                                     
                                      u.GananciaDirecta,
                                      u.GananciaEquipo,
                                      GananciaTotal = u.GananciaDirecta + u.GananciaEquipo,
-                                     u.PrimeraCompra
+                                     u.PrimeraCompra,
+                                     nivelDirecto = d.Nivel,
+                                     gananciaDirecto = d.Ganancia,
+                                     nivelEquipo = e.Nivel,
+                                     gananciaEquipo = e.Ganancia
                                  }).ToList();
+
+                var balance__ = (double)(from b in db.Usuarios
+                                 where b.Id == ID
+                                 select b.Balance).FirstOrDefault();
+
+                double balance_ = Convert.ToDouble(balance__);
+                var formatoBalance = balance__.ToString("N9");                
 
                 dynamic jsonSerializerIndex = JsonConvert.SerializeObject(datosUser);
                 dynamic jsonInformaciones = JsonConvert.DeserializeObject<dynamic>(jsonSerializerIndex);
 
+                var pagos = Pagos();
+
+                ViewBag.Balance = balance__.ToString("N9");
+                ViewBag.Pagos = pagos;
                 return Ok(jsonInformaciones);
             }
         }
 
-        public async Task VerificarDepositos()
+        public IActionResult Pagos()
         {
-            Console.WriteLine("Verificando Depositos");
-            CoinPaymentAPI api = new CoinPaymentAPI(s_privkey, s_pubkey);
-            SortedList<string, string> parms = new SortedList<string, string>();
+            var formatDate = CultureInfo.CreateSpecificCulture("es-ES");
 
+            var res = User.Claims.ToList();
+            var ID = Convert.ToInt32(res[0].Value);
             using (supercashContext db = new supercashContext())
             {
-                var depositos = (from d in db.Transacciones
-                                 select d).ToList();
+                var pagos = (from p in db.Pagos
+                             where p.IdPadre == ID
+                             orderby p.Fecha descending
+                             select new 
+                             {
+                                 Fecha = p.Fecha.ToString("hh:mm tt dd/MM/yyyy"),
+                                 p.IdUsuario,
+                                 p.TipoPago,
+                                 p.MontoTrx
+                             }
+                             ).ToList().Take(3);
 
-                foreach (var item in depositos)
-                {
-                    Console.WriteLine("Verificando Depositos ID Transaccion " + item.Id_transaccion);
-                    parms["txid"] = item.Id_transaccion;
+                dynamic jsonSerializerIndex = JsonConvert.SerializeObject(pagos);
+                dynamic jsonInformaciones = JsonConvert.DeserializeObject<dynamic>(jsonSerializerIndex);
 
-                    var resp = api.CallAPI("get_tx_info_multi", parms);
-
-                    foreach (var info in resp)
-                    {
-                        if (info.Key == "result")
-                        {
-                            foreach (var info2 in info.Value)
-                            {
-                                var fi = info2.Value;
-                                var status = fi.status.Value;
-
-                                if (status == 1)
-                                {
-                                    var depositoActualizar = (from d in db.Transacciones
-                                                              where d.Id_transaccion == item.Id_transaccion
-                                                              select d).FirstOrDefault();
-
-                                    depositoActualizar.Estado = "Aprobado";
-
-                                    db.Transacciones.Add(depositoActualizar);
-                                    db.Entry(depositoActualizar).State = EntityState.Modified;
-
-                                    var updateUser = await db.SaveChangesAsync();
-                                }
-                            }
-
-                        }
-
-                    }
-                }
-
-                //return Ok(depositos);
-            }
-
+                return Ok(jsonInformaciones);
+            }            
         }
 
         public async Task VerificarDepositos2()
-        {
-            Console.WriteLine("Verificando Depositos");
+        {            
             CoinPaymentAPI api = new CoinPaymentAPI(s_privkey, s_pubkey);
             SortedList<string, string> parms = new SortedList<string, string>();
 
@@ -146,17 +134,21 @@ namespace SuperCash.Controllers
                 string id_transaction = "";
                 int contador = 0;
 
-                foreach (var item in depositos)
+                if (depositos.Count > 0)
                 {
-                    contador++;
-                    Console.WriteLine("Verificando Depositos ID Transaccion " + item.Id_transaccion);
-                    id_transaction += item.Id_transaccion;
-                    if (contador < depositos.Count)
+                    Console.WriteLine("Verificando Depositos");
+
+                    foreach (var item in depositos)
                     {
-                        id_transaction += "|";
+                        contador++;
+                        Console.WriteLine("Verificando Depositos ID Transaccion " + item.Id_transaccion);
+                        id_transaction += item.Id_transaccion;
+                        if (contador < depositos.Count)
+                        {
+                            id_transaction += "|";
+                        }
+
                     }
-                    
-                }
                     parms["txid"] = id_transaction;
 
                     var resp = api.CallAPI("get_tx_info_multi", parms);
@@ -170,35 +162,68 @@ namespace SuperCash.Controllers
                                 string idTransaccionBucle = info2.Name;
                                 var fi = info2.Value;
                                 var status = fi.status.Value;
+                                var mount = fi.amountf.Value;
 
                                 var depositoActualizar = (from d in db.Transacciones
-                                                         where d.Id_transaccion == idTransaccionBucle
-                                                         select d).FirstOrDefault();
+                                                          where d.Id_transaccion == idTransaccionBucle
+                                                          select d).FirstOrDefault();
 
-                                if (status == 1)
-                                {
-                                   depositoActualizar.Estado = "Aprobado";
-                                }
                                 if (status == -1)
                                 {
                                     depositoActualizar.Estado = "Expirado";
                                 }
+                                if (status == 1)
+                                {
+                                    depositoActualizar.Estado = "En Proceso";
+                                }
+                                if (status == 100)
+                                {
+                                    // ACTUAlIZAR BALANCE DEL USUARIO RELACIONADO A ESTA TRANSACCIONES
 
+                                    var _buscarUsuario = (from d in db.Usuarios
+                                                          where d.Id == depositoActualizar.IdUsuario
+                                                          select d).FirstOrDefault();
+
+                                    _buscarUsuario.Balance += mount;
+
+                                    depositoActualizar.Estado = "Aprobado";
+
+                                    db.Usuarios.Add(_buscarUsuario);
+                                    db.Entry(_buscarUsuario).State = EntityState.Modified;
+                                }
+
+                                // ACTUALIZAR EL ESTADO DE LA TRANSACCION
                                 db.Transacciones.Add(depositoActualizar);
                                 db.Entry(depositoActualizar).State = EntityState.Modified;
 
-                                var updateUser = await db.SaveChangesAsync();
+                                var GuardarCambios = await db.SaveChangesAsync();
 
-                            }
+                            }// FIN DE FOREACH QUE ANALIZA LOS RESULTADOS DE LA API
 
-                        }
+                        }//FIN DEL IF QUE VALIDA QUE SE ENTRE EN LOS RESULTADOS DE LOS DATOS DEVUELTOS POR LA API
 
+                    }// FIN FOREACH QUE ANALIZA LA RESPUESTA DE LA API
+
+                    var res = User.Claims.ToList();
+                    int ID = Convert.ToInt32(res[0].Value);
+
+                    //CARGAR EL NUEVO BALANCE 
+                    var _user = (from d in db.Usuarios
+                                 select d).FirstOrDefault();
+
+                    double balance_ = Convert.ToDouble(_user.Balance);
+                    var Balance = balance_.ToString("N9");
+
+                    //SE LE ENVIA EL NUEVO BALANCE AL USUARIO                
+                    await _hub.Clients.All.SendAsync("ActualizarBalance", new { _user.Id, Balance });
+
+                }//FIN DEL IF
+                else
+                {
+                    Console.WriteLine("No hay Depositos pendientes en Base de Datos");
                 }
 
-
-                //return Ok(depositos);
-            }
-
+            }//FIN DEL USING
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -7,9 +7,7 @@ namespace SuperCash.Models
 {
     public class ConnectedUsers
     {
-        public static List<string> Connectados = new List<string>();
-
-        
+        public static string Connectado { get; set; }
     }
 
     

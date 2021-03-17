@@ -8,6 +8,7 @@ using SuperCash.Hubs;
 using SuperCash.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -71,28 +72,11 @@ namespace SuperCash.Controllers
             using (supercashContext db = new supercashContext())
             {
                 db.Transacciones.Add(_model);
-                //var respuestaDB = await db.SaveChangesAsync();
-                var respuestaDB = 1;
+                var respuestaDB = await db.SaveChangesAsync();                
 
                 if (respuestaDB == 1)
                 {
                     _return.Status = 200;
-
-                    var _user = (from u in db.Usuarios
-                                   where u.Id == ID
-                                   select u).FirstOrDefault();
-
-                    _user.Balance = _user.Balance + model.monto;
-
-                    db.Usuarios.Add(_user);
-                    db.Entry(_user).State = EntityState.Modified;
-                    var updateUser = await db.SaveChangesAsync();
-
-                    if (updateUser == 2)
-                    {
-                        await _hub.Clients.All.SendAsync("ActualizarBalance", _user.Balance);
-                    }
-                                  
                 }
                 else
                 {
@@ -101,6 +85,129 @@ namespace SuperCash.Controllers
             }
 
             return Ok(_return);
+        }
+
+        public async Task<IActionResult> ComprarLicencia()
+        {
+            Respuesta _return = new Respuesta();
+
+            var res = User.Claims.ToList();
+            var ID = Convert.ToInt32(res[0].Value);
+
+            using (supercashContext db = new supercashContext())
+            {
+                // SE BUSCA EL PRECIO DEL PRIMER NIVEL DIRECTO
+                var directo = (from d in db.NivelesDirectos
+                              where d.Nivel == 1
+                              select d.Costo).FirstOrDefault();
+
+                //SE BUSCA EL PRECIO DEL PRIMER NIVEL EN EQUIPOS
+                var equipo = (from d in db.NivelesEquipos
+                             where d.Nivel == 1
+                             select d.Costo).FirstOrDefault();
+
+                //SE SUMAN AMBAS CANTIDADES
+                var costoInicial = directo + equipo;
+
+                var Userbalance = (from b in db.Usuarios
+                               where b.Id == ID
+                               select b).FirstOrDefault();
+
+                if (Userbalance.Balance >= costoInicial)
+                {
+                    Userbalance.Balance -= costoInicial;
+                    Userbalance.PrimeraCompra = 1;
+                    Userbalance.NivelEquipo = 1;
+                    Userbalance.NivelDirecto = 1;
+
+                    db.Usuarios.Add(Userbalance);
+                    db.Entry(Userbalance).State = EntityState.Modified;
+                    await db.SaveChangesAsync();
+                    _return.Status = 200;
+                }
+                else
+                {
+                    _return.Status = 400;
+                }
+
+            }
+
+            return Ok(_return);
+        }
+
+        public async Task<IActionResult> SubirNivelDirecto()
+        {
+            Respuesta _return = new Respuesta();
+            Pago _pago = new Pago();
+            var res = User.Claims.ToList();
+            var ID = Convert.ToInt32(res[0].Value);
+
+            using (supercashContext db = new supercashContext())
+            {
+                var Userinfo = (from b in db.Usuarios
+                                   where b.Id == ID
+                                   select b).FirstOrDefault();
+
+                var proximo_nivel = Userinfo.NivelDirecto + 1;
+
+                var costo_proximo_nivel = (from n in db.NivelesDirectos
+                                          where n.Nivel == proximo_nivel
+                                           select n.Costo).FirstOrDefault();
+
+                var porcentajeComision = costo_proximo_nivel * 0.20;
+                var valorADepositar = costo_proximo_nivel - porcentajeComision;
+
+                if (Userinfo.Balance >= costo_proximo_nivel)
+                {
+                    Userinfo.Balance -= costo_proximo_nivel;
+                    Userinfo.NivelDirecto = proximo_nivel;
+
+                    db.Usuarios.Add(Userinfo);
+                    db.Entry(Userinfo).State = EntityState.Modified;
+
+                    _pago.Fecha = DateTime.Now;
+                    _pago.IdUsuario = ID;
+                    _pago.IdPadre = Userinfo.IdPadre;
+                    _pago.MontoTrx = valorADepositar;
+                    _pago.TipoPago = "Direct";                    
+
+                    db.Pagos.Add(_pago);                    
+                    await db.SaveChangesAsync();
+
+                    await _hub.Clients.All.SendAsync("Pagos");
+                    _return.Status = 200;
+                }
+                else
+                {
+                    _return.Status = 400;
+                }
+
+                return Ok(_return);
+            }
+        }
+
+        public IActionResult PagosRecientes()
+        {
+            using (supercashContext db = new supercashContext())
+            {
+                var res = User.Claims.ToList();
+                var ID = Convert.ToInt32(res[0].Value);
+
+                var pagos = (from p in db.Pagos
+                             where p.IdPadre == ID
+                             orderby p.Fecha descending
+                             select new
+                             {
+                                 ClientID = p.IdUsuario,
+                                 UserID = p.IdPadre,
+                                 TRX = p.MontoTrx,
+                                 Pay = p.TipoPago,
+                                 Fecha = p.Fecha.ToString("hh:mm tt dd/MM/yyyy")
+                             }).ToList().Take(3);
+
+                return Ok(pagos);
+            }
+            
         }
 
       

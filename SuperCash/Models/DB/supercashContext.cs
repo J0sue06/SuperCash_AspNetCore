@@ -36,7 +36,7 @@ namespace SuperCash.Models
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .Build();
-                optionsBuilder.UseSqlServer(configuration.GetConnectionString("casa"));                
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("trabajo"));                
             }
         }
 

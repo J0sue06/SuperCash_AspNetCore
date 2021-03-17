@@ -296,3 +296,4 @@ D:\Trabajos\SuperCash_AspNetCore\SuperCash_AspNetCore\SuperCash\obj\Debug\netcor
 D:\Trabajos\SuperCash_AspNetCore\SuperCash_AspNetCore\SuperCash\obj\Debug\netcoreapp3.1\SuperCash.genruntimeconfig.cache
 D:\Trabajos\SuperCash_AspNetCore\SuperCash_AspNetCore\SuperCash\obj\Debug\netcoreapp3.1\SuperCash.csprojAssemblyReference.cache
 D:\Trabajos\SuperCash_AspNetCore\SuperCash_AspNetCore\SuperCash\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
+D:\SuperCash\SuperCash_AspNetCore\SuperCash\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
