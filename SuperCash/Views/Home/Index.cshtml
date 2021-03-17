@@ -5,6 +5,7 @@
     var idUser = ViewBag.IDUser;
     var _balance = ViewBag.Balance;
     var _pagos = ViewBag.Pagos.Value;
+    var directoReferidos = ViewBag.Directos;
 }
 
 <!--component-->
@@ -20,7 +21,7 @@
             </div>
             <div class="rank d-flex flex-col pr-22">
                 <h3 class="mb-0 switch-font">Rank</h3>
-                <h2 class="bold-2">@infoUser[0].Rango</h2>
+                <h2 class="bold-2" id="Rank">@infoUser[0].Rango</h2>
             </div>
         </div>
         <div class="d-flex flex-col pr-22">
@@ -61,13 +62,13 @@
                                     <br>
                                 </div>
                                 <div class="license-level d-flex align-items-end flex-col switch-font">
-                                    <h3>LEVEL @infoUser[0].nivelDirecto</h3>
+                                    <h3 id="DirectLevel">LEVEL @infoUser[0].nivelDirecto</h3>
                                     <button type="button" id="UpgradeDirect">Upgrade</button>
                                 </div>
                             </div>
                             <div class="d-flex license-price full-height">
                                 <div class="price full-height">
-                                    <h1>@infoUser[0].gananciaDirecto <span class="minified">TRX</span></h1>
+                                    <h1 id="PayDirect">@infoUser[0].gananciaDirecto <span class="minified">TRX</span></h1>
                                 </div>
                             </div>
                         </div>
@@ -81,13 +82,13 @@
                                     <h4>x 4 LEVELS</h4>
                                 </div>
                                 <div class="license-level d-flex align-items-end flex-col switch-font">
-                                    <h3>LEVEL @infoUser[0].nivelEquipo</h3>
-                                    <button>Upgrade</button>
+                                    <h3 id="TeamLevel">LEVEL @infoUser[0].nivelEquipo</h3>
+                                    <button type="button" id="UpgradeTeam">Upgrade</button>
                                 </div>
                             </div>
                             <div class="d-flex license-price full-height">
                                 <div class="price full-height">
-                                    <h1>@infoUser[0].gananciaEquipo <span class="minified">TRX</span></h1>
+                                    <h1 id="PayTeam">@infoUser[0].gananciaEquipo <span class="minified">TRX</span></h1>
                                 </div>
                             </div>
                         </div>
@@ -144,7 +145,7 @@
                         <h3>Direct</h3>
                         <div class="direct-affiliates d-flex align-items-center">
                             <i class="bi bi-person"></i>
-                            <h1 class="accent">216</h1>
+                            <h1 class="accent" id="affiliateDirect">@directoReferidos</h1>
                         </div>
                     </div>
                     <div class="col-lg-3">

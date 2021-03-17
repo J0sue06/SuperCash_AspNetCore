@@ -4,17 +4,21 @@ $(document).ready(() => {
     let connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
     let ID = $('#ID').html(); 
 
-    connection.on("ActualizarBalance", function (res) { 
-        const { id, balance } = res;
-        if (ID == id) {
-            console.log(balance);
-            $('#Balance').html(`${balance} TRX`);
-        }
+    connection.on("Update", function (res) {
+        UpdateInfo();
     });
 
-    connection.on("Pagos", function (res) {        
-        PagosRecientes();      
-    });
+    //connection.on("ActualizarBalance", function (res) { 
+    //    const { id, balance } = res;
+    //    if (ID == id) {
+    //        console.log(balance);
+    //        $('#Balance').html(`${balance} TRX`);
+    //    }
+    //});
+
+    //connection.on("Pagos", function (res) {        
+    //    PagosRecientes();      
+    //});
 
     connection.start().then(function () {
         //console.log(connection);
@@ -139,8 +143,7 @@ $(document).ready(() => {
                 $.ajax({
                     url: '/Transacciones/SubirNivelDirecto',
                     method: 'POST',
-                    success: (res) => {
-                        console.log(res);
+                    success: (res) => {                        
                         const { status } = res;
                         if (status == 200) {
                             Swal.fire({
@@ -149,17 +152,15 @@ $(document).ready(() => {
                                 title: 'Nivel actualizado!',
                                 showConfirmButton: false,
                                 timer: 1500
-                            });
-                            //setTimeout(() => { document.location.reload() }, 1500)
+                            });                            
                         }
                         if (status == 400) {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
                                 text: 'No cuentas con balance suficiente!'
-                            })
+                            });
                         }
-
                     },
                     error: (err) => {
                         console.error(err);
@@ -171,31 +172,82 @@ $(document).ready(() => {
 
     });
 
-    const PagosRecientes = () => {
+    $("#UpgradeTeam").click(function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: '¿Estas seguro?',
+            text: `Realmente quieres subir de nivel`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, hazlo!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    url: '/Transacciones/SubirNivelEquipos',
+                    method: 'POST',
+                    success: (res) => {
+                        const { status } = res;
+                        if (status == 200) {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Nivel actualizado!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                        if (status == 400) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'No cuentas con balance suficiente!'
+                            });
+                        }
+                    },
+                    error: (err) => {
+                        console.error(err);
+                    }
+                });
+
+            }
+        });
+
+    });
+
+    const UpdateInfo = () => {
         $.ajax({
-            url: '/Transacciones/PagosRecientes',
+            url: '/Home/UpdateInfo',
             method: 'POST',
             success: (res) => {
-                let pagos = '<tr>';
+                const { infoUser, balance, payments, directos } = res;
                 console.log(res);
-                $.each(res, function (key, value) {
-                    const { clientID, trx, pay, fecha } = value;
-                 
-                        console.log(value);
+                const { costoDirecto, costoEquipo, nivelDirecto, nivelEquipo, rango } = infoUser;
+                $('#Balance').html(`${balance} TRX`);
+                $('#Rank').html(rango);
+                $('#DirectLevel').html(nivelDirecto);
+                $('#PayDirect').html(`${costoDirecto} TRX`);
+                $('#TeamLevel').html(nivelEquipo);
+                $('#PayTeam').html(`${costoEquipo} TRX`);
+                $('#affiliateDirect').html(directos);
+               
+                let pagos = '<tr>';    
+                $.each(payments, function (key, value) {
+                    const { montoTrx, tipoPago, idUsuario, fecha } = value;                        
                         pagos += `
-                        <td>${trx}</td>
-                        <td>${pay}</td>
-                        <td>${clientID}</td>
-                        <td>${fecha}</td>
+                        <th>${montoTrx} TRX</th>
+                        <td>${tipoPago}</td>
+                        <td class="text-right">${idUsuario}</td>
+                        <td class="text-right">${fecha}</td>
                         `;
-
-                        pagos += '</tr>';                  
-
+                        pagos += '</tr>'; 
                 });
                 if (pagos.length > 4) {
                     $('#PayList').html(pagos);
                 }
-
             },
             error: (err) => {
                 console.error(err);

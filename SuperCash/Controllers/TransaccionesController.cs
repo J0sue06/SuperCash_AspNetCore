@@ -174,7 +174,7 @@ namespace SuperCash.Controllers
                     db.Pagos.Add(_pago);                    
                     await db.SaveChangesAsync();
 
-                    await _hub.Clients.All.SendAsync("Pagos");
+                    await _hub.Clients.All.SendAsync("Update");
                     _return.Status = 200;
                 }
                 else
@@ -186,30 +186,57 @@ namespace SuperCash.Controllers
             }
         }
 
-        public IActionResult PagosRecientes()
+        public async Task<IActionResult> SubirNivelEquipos()
         {
+            Respuesta _return = new Respuesta();
+            Pago _pago = new Pago();
+            var res = User.Claims.ToList();
+            var ID = Convert.ToInt32(res[0].Value);
+
             using (supercashContext db = new supercashContext())
             {
-                var res = User.Claims.ToList();
-                var ID = Convert.ToInt32(res[0].Value);
+                var Userinfo = (from b in db.Usuarios
+                                where b.Id == ID
+                                select b).FirstOrDefault();
 
-                var pagos = (from p in db.Pagos
-                             where p.IdPadre == ID
-                             orderby p.Fecha descending
-                             select new
-                             {
-                                 ClientID = p.IdUsuario,
-                                 UserID = p.IdPadre,
-                                 TRX = p.MontoTrx,
-                                 Pay = p.TipoPago,
-                                 Fecha = p.Fecha.ToString("hh:mm tt dd/MM/yyyy")
-                             }).ToList().Take(3);
+                var proximo_nivel = Userinfo.NivelEquipo + 1;
 
-                return Ok(pagos);
+                var costo_proximo_nivel = (from n in db.NivelesEquipos
+                                           where n.Nivel == proximo_nivel
+                                           select n.Costo).FirstOrDefault();
+
+                var porcentajeComision = costo_proximo_nivel * 0.20;
+                var valorADepositar = costo_proximo_nivel - porcentajeComision;
+
+                if (Userinfo.Balance >= costo_proximo_nivel)
+                {
+                    Userinfo.Balance -= costo_proximo_nivel;
+                    Userinfo.NivelEquipo = proximo_nivel;
+
+                    db.Usuarios.Add(Userinfo);
+                    db.Entry(Userinfo).State = EntityState.Modified;
+
+                    _pago.Fecha = DateTime.Now;
+                    _pago.IdUsuario = ID;
+                    _pago.IdPadre = Userinfo.IdPadre;
+                    _pago.MontoTrx = valorADepositar;
+                    _pago.TipoPago = "Team";
+
+                    db.Pagos.Add(_pago);
+                    await db.SaveChangesAsync();
+
+                    await _hub.Clients.All.SendAsync("Update");
+                    _return.Status = 200;
+                }
+                else
+                {
+                    _return.Status = 400;
+                }
+
+                return Ok(_return);
             }
-            
         }
 
-      
+
     }
 }

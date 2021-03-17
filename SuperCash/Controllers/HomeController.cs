@@ -43,9 +43,9 @@ namespace SuperCash.Controllers
             var res = User.Claims.ToList();
             var ID = res[0].Value;  
 
-            var result = Informaciones(Convert.ToInt32(ID));            
-
-            //ViewBag.IdsConnected = ConnectedUsers.Connectados;
+            var result = Informaciones(Convert.ToInt32(ID));
+            
+            //await _hub.Clients.All.SendAsync("Update");
             ViewBag.Informaciones = result;
             ViewBag.IDUser = ID;
 
@@ -78,17 +78,18 @@ namespace SuperCash.Controllers
                 var balance__ = (double)(from b in db.Usuarios
                                  where b.Id == ID
                                  select b.Balance).FirstOrDefault();
-
-                double balance_ = Convert.ToDouble(balance__);
-                var formatoBalance = balance__.ToString("N9");                
+                        
 
                 dynamic jsonSerializerIndex = JsonConvert.SerializeObject(datosUser);
                 dynamic jsonInformaciones = JsonConvert.DeserializeObject<dynamic>(jsonSerializerIndex);
 
                 var pagos = Pagos();
+                var directos = db.Usuarios.Count(u => u.IdPadre == ID);
 
                 ViewBag.Balance = balance__.ToString("N9");
-                ViewBag.Pagos = pagos;
+                ViewBag.Pagos = pagos;                
+                ViewBag.Directos = directos;
+
                 return Ok(jsonInformaciones);
             }
         }
@@ -215,7 +216,7 @@ namespace SuperCash.Controllers
                     var Balance = balance_.ToString("N9");
 
                     //SE LE ENVIA EL NUEVO BALANCE AL USUARIO                
-                    await _hub.Clients.All.SendAsync("ActualizarBalance", new { _user.Id, Balance });
+                    await _hub.Clients.All.SendAsync("Update");
 
                 }//FIN DEL IF
                 else
@@ -225,6 +226,51 @@ namespace SuperCash.Controllers
 
             }//FIN DEL USING
         }
+
+        public IActionResult UpdateInfo()
+        {
+            using (supercashContext db = new supercashContext())
+            {
+                var res = User.Claims.ToList();
+                var ID = Convert.ToInt32(res[0].Value);
+
+                var userInfo = (from u in db.Usuarios
+                                join d in db.NivelesDirectos on u.NivelDirecto equals d.Nivel
+                                join e in db.NivelesEquipos on u.NivelDirecto equals e.Nivel
+                                where u.Id == ID
+                                select new
+                                {
+                                    Balance = (double)u.Balance,
+                                    u.Rango,
+                                    nivelDirecto = d.Nivel,
+                                    costoDirecto = d.Costo,
+                                    nivelEquipo = e.Nivel,
+                                    costoEquipo = e.Costo
+                                }).FirstOrDefault();
+
+                var balance = userInfo.Balance;
+
+                var userBalance = balance.ToString("N9");
+
+                var pagosRecientes = (from p in db.Pagos
+                                      orderby p.Fecha descending
+                                      where p.IdPadre == ID
+                                      select new 
+                                      {
+                                          Fecha = p.Fecha.ToString("hh:mm tt dd/MM/yyyy"),
+                                          p.IdPadre,
+                                          p.IdUsuario,
+                                          p.MontoTrx,
+                                          p.TipoPago
+                                      }).ToList().Take(3);
+
+                var directos = db.Usuarios.Count(u => u.IdPadre == ID);
+
+                return Ok(new { InfoUser = userInfo, Payments = pagosRecientes, Balance = userBalance, Directos = directos });
+            }
+        }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
