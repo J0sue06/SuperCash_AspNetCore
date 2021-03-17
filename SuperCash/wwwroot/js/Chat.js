@@ -9,6 +9,11 @@ $(document).ready(() => {
         //console.log(res);
     });
 
+    connection.on("ActualizarBalance", function (res) {
+        $('#Balance').html(`${res} TX`);
+        //console.log(res);
+    });
+
     connection.start().then(function () {
         console.log("Socket Conectado");
     }).catch(function (err) {
@@ -44,7 +49,18 @@ $(document).ready(() => {
                     method: 'POST',
                     data: { model: obj },
                     success: (res) => {
-                        console.log(res);
+                        const { status } = res;
+                        if (status == 200) {
+                            Swal.fire({
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Depositado correctamente!',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                            $('#modalDepositos').modal('hide');
+                        }
+                       // console.log(res);
                     },
                     error: (err) => {
                         console.error(err);
@@ -58,7 +74,44 @@ $(document).ready(() => {
 
     $("#buyLincense").click(function (e) {
         e.preventDefault();
-        Valor++;
+
+        Swal.fire({
+            title: '¿Estas seguro?',
+            text: `Realmente quieres comprar las licencias`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, hazlo!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                //console.log("Click");
+
+                //$.ajax({
+                //    url: '/Transacciones/VerificarDepositos',
+                //    method: 'GET',
+                //    success: (res) => {
+                //        //const { status } = res;
+                //        //if (status == 200) {
+                //        //    Swal.fire({
+                //        //        position: 'top-end',
+                //        //        icon: 'success',
+                //        //        title: 'Depositado correctamente!',
+                //        //        showConfirmButton: false,
+                //        //        timer: 1500
+                //        //    });
+                //        //    $('#modalDepositos').modal('hide');
+                //        //}
+                //        console.log(res);
+                //    },
+                //    error: (err) => {
+                //        console.error(err);
+                //    }
+                //});
+
+            }
+        });
+
 
         //$.ajax({
         //    url: '/Transacciones/Deposito',
@@ -75,7 +128,16 @@ $(document).ready(() => {
 
     });
 
-
+    const Verificar = () => {
+        $.ajax({
+            url: '/Home/VerificarDepositos2',
+            method: 'GET',
+            error: (err) => {
+                console.error(err);
+            }
+        });
+    }
+    Verificar();
 
 });
 

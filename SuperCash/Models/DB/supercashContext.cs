@@ -36,9 +36,7 @@ namespace SuperCash.Models
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("appsettings.json")
                 .Build();
-                optionsBuilder.UseSqlServer(configuration.GetConnectionString("trabajo"));
-
-                //optionsBuilder.UseSqlServer("Server=DESKTOP-6JUMSB9\\SQLEXPRESS; Database=supercash;User ID=adminp; password=M@ster123;");
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("casa"));                
             }
         }
 
@@ -114,6 +112,8 @@ namespace SuperCash.Models
                 entity.Property(e => e.MontoBtc).HasColumnName("monto_btc");
 
                 entity.Property(e => e.MontoTrx).HasColumnName("monto_trx");
+
+                entity.Property(e => e.Id_transaccion).HasColumnName("id_transaccion");
             });
 
             modelBuilder.Entity<Usuario>(entity =>

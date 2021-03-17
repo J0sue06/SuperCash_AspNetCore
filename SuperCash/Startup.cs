@@ -34,7 +34,7 @@ namespace SuperCash
             services.AddSignalR();
 
             services.AddDbContext<supercashContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("trabajo")));
+            options.UseSqlServer(Configuration.GetConnectionString("casa")));
 
             services.AddAuthentication(options =>
             {
@@ -88,13 +88,6 @@ namespace SuperCash
                     await next.Invoke();
                 }
             });
-
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<ChatHub>("/chatHub/deposito");
-                //routes.MapHub<YourHubClass2>("/hub/test2");
-            });
-
 
         }
     }

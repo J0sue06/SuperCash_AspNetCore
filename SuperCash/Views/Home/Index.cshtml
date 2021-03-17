@@ -23,7 +23,7 @@
         </div>
         <div class="d-flex flex-col pr-22">
             <h3 class="mb-0 switch-font">Balance</h3>
-            <h2 class="color-primary">@infoUser[0].Balance TRX</h2>
+            <h2 class="color-primary" id="Balance">@infoUser[0].Balance TRX</h2>
         </div>
         <div class="d-flex flex-col pr-22">
             <ul>
@@ -37,62 +37,69 @@
     <div class="dash-section row mb-5">
         <div class="col-lg-7 flex-col">
             <h2 class="bold small-side-padding switch-font">My affiliate licenses</h2>
-            <!--div para comprar licencias-->
-            <div id="non-licensed-user" class="licenses-wrap mb-5 row small-side-padding">
-                <div class="col-lg-12 license ">
-                    <div class="buy-license-cta">
-                        <h2>You're just one step from making money</h2>
-                        <h3>Get your official license and let the fun begin!</h3>
-                        <div class="buy-license-button-wrap">
-                            <button class="btn btn-success width-100 mb-2">I want to buy my license</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--cuando las licencias ya estan compradas-->
-            <div id="licensed-user" class="licenses-wrap row small-side-padding">
-                <div class="license col-lg-6">
-                    <div class="d-flex rounded full-height flex-col third-bg license-inner">
-                        <div class="d-flex license-type-and-level justify-content-between">
-                            <div class="license-type switch-font">
-                                <h3>DIRECT</h3>
-                                <h4>80% COMMISSION</h4>
-                                <br>
-                            </div>
-                            <div class="license-level d-flex align-items-end flex-col switch-font">
-                                <h3>LEVEL 1</h3>
-                                <button>Upgrade</button>
-                            </div>
-                        </div>
-                        <div class="d-flex license-price full-height">
-                            <div class="price full-height">
-                                <h1>200 <span class="minified">TRX</span></h1>
+            @if (@infoUser[0].PrimeraCompra == 0)
+            {
+                <!--div para comprar licencias--><div id="non-licensed-user" class="licenses-wrap mb-5 row small-side-padding">
+                    <div class="col-lg-12 license ">
+                        <div class="buy-license-cta">
+                            <h2>You're just one step from making money</h2>
+                            <h3>Get your official license and let the fun begin!</h3>
+                            <div class="buy-license-button-wrap">
+                                <button class="btn btn-success width-100 mb-2" id="buyLincense">I want to buy my license</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="license rounded col-lg-6">
-                    <div class="d-flex rounded full-height flex-col third-bg license-inner">
-                        <div class="d-flex license-type-and-level justify-content-between">
-                            <div class="license-type switch-font">
-                                <h3>TEAM</h3>
-                                <h4>20% COMMISSION</h4>
-                                <h4>x 4 LEVELS</h4>
+            }
+            else
+            {
+                <!--cuando las licencias ya estan compradas-->
+                <div id="licensed-user" class="licenses-wrap row small-side-padding">
+                    <div class="license col-lg-6">
+                        <div class="d-flex rounded full-height flex-col third-bg license-inner">
+                            <div class="d-flex license-type-and-level justify-content-between">
+                                <div class="license-type switch-font">
+                                    <h3>DIRECT</h3>
+                                    <h4>80% COMMISSION</h4>
+                                    <br>
+                                </div>
+                                <div class="license-level d-flex align-items-end flex-col switch-font">
+                                    <h3>LEVEL 1</h3>
+                                    <button>Upgrade</button>
+                                </div>
                             </div>
-                            <div class="license-level d-flex align-items-end flex-col switch-font">
-                                <h3>LEVEL 1</h3>
-                                <button>Upgrade</button>
+                            <div class="d-flex license-price full-height">
+                                <div class="price full-height">
+                                    <h1>200 <span class="minified">TRX</span></h1>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex license-price full-height">
-                            <div class="price full-height">
-                                <h1>200 <span class="minified">TRX</span></h1>
+                    </div>
+                    <div class="license rounded col-lg-6">
+                        <div class="d-flex rounded full-height flex-col third-bg license-inner">
+                            <div class="d-flex license-type-and-level justify-content-between">
+                                <div class="license-type switch-font">
+                                    <h3>TEAM</h3>
+                                    <h4>20% COMMISSION</h4>
+                                    <h4>x 4 LEVELS</h4>
+                                </div>
+                                <div class="license-level d-flex align-items-end flex-col switch-font">
+                                    <h3>LEVEL 1</h3>
+                                    <button>Upgrade</button>
+                                </div>
+                            </div>
+                            <div class="d-flex license-price full-height">
+                                <div class="price full-height">
+                                    <h1>200 <span class="minified">TRX</span></h1>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <h3 class="small-side-padding">My affiliate link: <a href="#">https://thislink/ref?=45 <i class="bi bi-files"></i></a></h3>
+
+                <h3 class="small-side-padding">My affiliate link: <a href="#">https://thislink/ref?=45 <i class="bi bi-files"></i></a></h3>
+            }
+
             <hr id="vertical-screen-divisor">
         </div>
         <div class="col-lg-5 small-side-padding">
@@ -227,7 +234,7 @@
 </div>
 
 @*MODAL DEPOSITOS*@
-<div class="modal fade" id="modalDepositos" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="modalDepositos" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">

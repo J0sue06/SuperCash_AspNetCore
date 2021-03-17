@@ -11,6 +11,7 @@ namespace SuperCash.Models
         public int? IdUsuario { get; set; }
         public double? MontoBtc { get; set; }
         public double? MontoTrx { get; set; }
+        public string Id_transaccion { get; set; }
         public DateTime? Fecha { get; set; }
         public string Estado { get; set; }
     }

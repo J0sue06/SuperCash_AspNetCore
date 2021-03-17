@@ -64,7 +64,8 @@ namespace SuperCash.Migrations
                     monto_btc = table.Column<double>(type: "float", nullable: true),
                     monto_trx = table.Column<double>(type: "float", nullable: true),
                     fecha = table.Column<DateTime>(type: "datetime", nullable: true),
-                    estado = table.Column<string>(type: "varchar(95)", unicode: false, maxLength: 95, nullable: true)
+                    estado = table.Column<string>(type: "varchar(95)", unicode: false, maxLength: 95, nullable: true),
+                    Id_transaccion = table.Column<string>(type: "varchar(95)", unicode: false, maxLength: 95, nullable: true)
                 },
                 constraints: table =>
                 {

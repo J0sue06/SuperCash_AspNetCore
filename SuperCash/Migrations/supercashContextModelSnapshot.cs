@@ -135,6 +135,10 @@ namespace SuperCash.Migrations
                         .HasColumnType("float")
                         .HasColumnName("monto_trx");
 
+                    b.Property<string>("id_transaccion")
+                       .HasColumnType("varchar(95)")
+                       .HasColumnName("id_transaccion");
+
                     b.HasKey("Id");
 
                     b.ToTable("transacciones");
