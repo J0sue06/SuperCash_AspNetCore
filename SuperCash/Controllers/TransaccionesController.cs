@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SuperCash.Controllers
@@ -189,9 +190,10 @@ namespace SuperCash.Controllers
         public async Task<IActionResult> SubirNivelEquipos()
         {
             Respuesta _return = new Respuesta();
-            Pago _pago = new Pago();
+            
             var res = User.Claims.ToList();
             var ID = Convert.ToInt32(res[0].Value);
+            int IdPadre = 0;            
 
             using (supercashContext db = new supercashContext())
             {
@@ -205,8 +207,9 @@ namespace SuperCash.Controllers
                                            where n.Nivel == proximo_nivel
                                            select n.Costo).FirstOrDefault();
 
-                var porcentajeComision = costo_proximo_nivel * 0.20;
-                var valorADepositar = costo_proximo_nivel - porcentajeComision;
+                var valorADepositar = costo_proximo_nivel / 5;
+                int paraPlataforma = (int)valorADepositar;
+                int contador = 0;
 
                 if (Userinfo.Balance >= costo_proximo_nivel)
                 {
@@ -215,16 +218,55 @@ namespace SuperCash.Controllers
 
                     db.Usuarios.Add(Userinfo);
                     db.Entry(Userinfo).State = EntityState.Modified;
-
-                    _pago.Fecha = DateTime.Now;
-                    _pago.IdUsuario = ID;
-                    _pago.IdPadre = Userinfo.IdPadre;
-                    _pago.MontoTrx = valorADepositar;
-                    _pago.TipoPago = "Team";
-
-                    db.Pagos.Add(_pago);
                     await db.SaveChangesAsync();
 
+                    IdPadre = (int)Userinfo.IdPadre;
+                    //IDHijo = ID;
+                    for (int i = contador; i < 3;)
+                    {
+                        // CODIGOS PARA ACTUALIZAR BALANCE DEL PADRE
+                        var infoPadre = (from d in db.Usuarios
+                                         where d.Id == IdPadre
+                                         select d).FirstOrDefault();
+
+                        if (infoPadre == null)
+                        {
+                            var vueltasRestantes = 3 - contador;
+                            paraPlataforma += vueltasRestantes * (int)valorADepositar;
+                            //paraPlataforma += dineroRestante;
+                            Console.WriteLine("No mas personas solo pago a " + contador + " personas");
+                            Console.WriteLine("Dinero restante para plataforma es " + paraPlataforma);
+                            break;
+                        }
+
+                        IdPadre = infoPadre.IdPadre.Value;
+
+                        if (infoPadre.NivelEquipo >= proximo_nivel)
+                        {
+                            contador++;
+
+                            Pago _pago = new Pago();
+
+                            // CODIGOS PARA EFECTUAR PAGO A EL PADRE
+                            _pago.Fecha = DateTime.Now;
+                            _pago.IdUsuario = infoPadre.Id;
+                            _pago.IdPadre = infoPadre.IdPadre;
+                            _pago.MontoTrx = valorADepositar;
+                            _pago.TipoPago = "Team";
+
+                            db.Pagos.Add(_pago);
+                            await db.SaveChangesAsync();                            
+
+                            // CODIGOS PARA ACTUALIZAR BALANCE Y GANANCIA DE EQUIPO
+                            infoPadre.Balance += valorADepositar;
+                            infoPadre.GananciaEquipo += valorADepositar;
+
+                            db.Usuarios.Add(infoPadre);
+                            db.Entry(infoPadre).State = EntityState.Modified;
+                            await db.SaveChangesAsync();
+                        }     
+
+                    }                    
                     await _hub.Clients.All.SendAsync("Update");
                     _return.Status = 200;
                 }

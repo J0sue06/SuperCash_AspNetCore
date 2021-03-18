@@ -236,15 +236,15 @@ namespace SuperCash.Controllers
 
                 var userInfo = (from u in db.Usuarios
                                 join d in db.NivelesDirectos on u.NivelDirecto equals d.Nivel
-                                join e in db.NivelesEquipos on u.NivelDirecto equals e.Nivel
+                                join e in db.NivelesEquipos on u.NivelEquipo equals e.Nivel
                                 where u.Id == ID
                                 select new
                                 {
                                     Balance = (double)u.Balance,
                                     u.Rango,
-                                    nivelDirecto = d.Nivel,
+                                    nivelDirecto = u.NivelDirecto,
                                     costoDirecto = d.Costo,
-                                    nivelEquipo = e.Nivel,
+                                    nivelEquipo = u.NivelEquipo,
                                     costoEquipo = e.Costo
                                 }).FirstOrDefault();
 

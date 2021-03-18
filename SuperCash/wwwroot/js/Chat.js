@@ -5,7 +5,10 @@ $(document).ready(() => {
     let ID = $('#ID').html(); 
 
     connection.on("Update", function (res) {
-        UpdateInfo();
+        setTimeout(() => {
+            UpdateInfo();
+        },2000)
+        
     });
 
     //connection.on("ActualizarBalance", function (res) { 
@@ -221,16 +224,16 @@ $(document).ready(() => {
     const UpdateInfo = () => {
         $.ajax({
             url: '/Home/UpdateInfo',
-            method: 'POST',
+            method: 'GET',
             success: (res) => {
                 const { infoUser, balance, payments, directos } = res;
                 console.log(res);
                 const { costoDirecto, costoEquipo, nivelDirecto, nivelEquipo, rango } = infoUser;
                 $('#Balance').html(`${balance} TRX`);
                 $('#Rank').html(rango);
-                $('#DirectLevel').html(nivelDirecto);
+                $('#DirectLevel').html(`LEVEL ${nivelDirecto}`);
                 $('#PayDirect').html(`${costoDirecto} TRX`);
-                $('#TeamLevel').html(nivelEquipo);
+                $('#TeamLevel').html(`LEVEL ${nivelEquipo}`);
                 $('#PayTeam').html(`${costoEquipo} TRX`);
                 $('#affiliateDirect').html(directos);
                
