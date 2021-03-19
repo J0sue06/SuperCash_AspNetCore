@@ -34,13 +34,27 @@ $(document).ready(() => {
 
         const _monto = $('#MontoDeposito').val();
 
-        if (_monto == '') {
+        if (_monto <= 0 ) {
+            console.log("Validacion");
             return;
         }
 
+        const _valor = parseFloat(_monto);
+
+        const feePay = 0.005;
+
+        const sub = _valor * feePay;
+        const fee = _valor + sub;
+        const realFee = RedondearValor(fee);
+        console.log(realFee);
+
         Swal.fire({
-            title: '¿Estas seguro?',
-            text: `Realmente quieres hacer un deposito por ${_monto} BTC`,
+            title: 'Confirmacion de Deposito',
+            html: `<h2>Monto ${_monto} BTC </h2>
+                   <h2>Procesador de pago</h2> (0.5%)
+                   <hr/>
+                   <h3>Total</h3>${realFee} BTC
+                    `,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -50,15 +64,15 @@ $(document).ready(() => {
             if (result.isConfirmed) {
 
                 const obj = {
-                    monto: _monto
+                    monto: _valor
                 };
 
                 $.ajax({
                     url: '/Transacciones/Deposito',
                     method: 'POST',
-                    data: { model: obj },
+                    data: { model: obj, Moneda: "TRX" },
                     success: (res) => {
-                        const { status } = res;
+                        const { status, redirectUrl } = res;
                         if (status == 200) {
                             Swal.fire({
                                 position: 'top-end',
@@ -68,6 +82,9 @@ $(document).ready(() => {
                                 timer: 1500
                             });
                             $('#modalDepositos').modal('hide');
+                            setTimeout(() => {
+                                document.location.href = redirectUrl;
+                            },1500)
                         }
                        // console.log(res);
                     },
@@ -244,8 +261,7 @@ $(document).ready(() => {
                         <th>${montoTrx} TRX</th>
                         <td>${tipoPago}</td>
                         <td class="text-right">${idUsuario}</td>
-                        <td class="text-right">${fecha}</td>
-                        `;
+                        <td class="text-right">${fecha}</td>`;
                         pagos += '</tr>'; 
                 });
                 if (pagos.length > 4) {
@@ -256,6 +272,15 @@ $(document).ready(() => {
                 console.error(err);
             }
         });
+    }
+
+
+    const RedondearValor = (x, posiciones = 8) => {
+        const s = x.toString()
+        const l = s.length
+        const decimalLength = s.indexOf('.') + 1
+        const numStr = s.substr(0, decimalLength + posiciones)
+        return Number(numStr)
     }
    
 

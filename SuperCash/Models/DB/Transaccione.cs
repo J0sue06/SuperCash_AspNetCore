@@ -9,7 +9,7 @@ namespace SuperCash.Models
     {
         public int Id { get; set; }
         public int? IdUsuario { get; set; }
-        public double? MontoBtc { get; set; }
+        public string Monto { get; set; }
         public double? MontoTrx { get; set; }
         public string Id_transaccion { get; set; }
         public DateTime? Fecha { get; set; }

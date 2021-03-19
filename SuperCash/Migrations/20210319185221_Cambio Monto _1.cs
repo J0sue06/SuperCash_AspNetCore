@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SuperCash.Migrations
 {
-    public partial class IdentityDBUser : Migration
+    public partial class CambioMonto_1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -47,7 +47,7 @@ namespace SuperCash.Migrations
                     id_padre = table.Column<int>(type: "int", nullable: true),
                     monto_trx = table.Column<double>(type: "float", nullable: true),
                     tipo_pago = table.Column<string>(type: "varchar(95)", unicode: false, maxLength: 95, nullable: true),
-                    fecha = table.Column<DateTime>(type: "datetime", nullable: true)
+                    fecha = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,11 +61,11 @@ namespace SuperCash.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     id_usuario = table.Column<int>(type: "int", nullable: true),
-                    monto_btc = table.Column<double>(type: "float", nullable: true),
+                    monto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     monto_trx = table.Column<double>(type: "float", nullable: true),
+                    id_transaccion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     fecha = table.Column<DateTime>(type: "datetime", nullable: true),
-                    estado = table.Column<string>(type: "varchar(95)", unicode: false, maxLength: 95, nullable: true),
-                    Id_transaccion = table.Column<string>(type: "varchar(95)", unicode: false, maxLength: 95, nullable: true)
+                    estado = table.Column<string>(type: "varchar(95)", unicode: false, maxLength: 95, nullable: true)
                 },
                 constraints: table =>
                 {

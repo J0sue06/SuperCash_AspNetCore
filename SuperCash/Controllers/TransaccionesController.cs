@@ -29,8 +29,8 @@ namespace SuperCash.Controllers
             s_privkey = Configuration.GetConnectionString("s_privkey");
         }
 
-        public async Task<IActionResult> Deposito(DepositoViewModel model)
-        {           
+        public async Task<IActionResult> Deposito(DepositoViewModel model, string Moneda)
+        {   
             CoinPaymentAPI api = new CoinPaymentAPI(s_privkey, s_pubkey);
 
             Respuesta _return = new Respuesta();            
@@ -43,8 +43,16 @@ namespace SuperCash.Controllers
 
             SortedList<string, string> parms = new SortedList<string, string>();
 
-            parms["amount"] = Convert.ToString(model.monto);
-            parms["currency1"] = "BTC";
+            double _feePay = 0.005;
+
+            double _sub = model.monto * _feePay;
+            double _fee = model.monto + _sub;
+
+            var valorParseado = Truncate(_fee, 8);
+            var valorString = Convert.ToString(valorParseado);
+
+            parms["amount"] = Convert.ToString(_fee); 
+            parms["currency1"] = "TRX";
             parms["currency2"] = "TRX";
             parms["buyer_email"] = Email;
 
@@ -66,7 +74,7 @@ namespace SuperCash.Controllers
             _model.Estado = "Pendiente";
             _model.Fecha = DateTime.Now;
             _model.IdUsuario = ID;
-            _model.MontoBtc = model.monto;
+            _model.Monto = model.monto + Moneda;
             _model.MontoTrx = informacionAPI.amount;
             _model.Id_transaccion = informacionAPI.txn_id;
 
@@ -77,6 +85,7 @@ namespace SuperCash.Controllers
 
                 if (respuestaDB == 1)
                 {
+                    _return.RedirectUrl = informacionAPI.status_url; 
                     _return.Status = 200;
                 }
                 else
@@ -86,6 +95,11 @@ namespace SuperCash.Controllers
             }
 
             return Ok(_return);
+        }
+        public double Truncate(double value, int decimales)
+        {
+            double aux_value = Math.Pow(10, decimales);
+            return (Math.Truncate(value * aux_value) / aux_value);
         }
 
         public async Task<IActionResult> ComprarLicencia()
@@ -231,7 +245,7 @@ namespace SuperCash.Controllers
 
                         if (infoPadre == null)
                         {
-                            var vueltasRestantes = 3 - contador;
+                            var vueltasRestantes = 4 - contador;
                             paraPlataforma += vueltasRestantes * (int)valorADepositar;
                             //paraPlataforma += dineroRestante;
                             Console.WriteLine("No mas personas solo pago a " + contador + " personas");

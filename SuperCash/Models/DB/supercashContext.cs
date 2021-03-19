@@ -109,7 +109,7 @@ namespace SuperCash.Models
 
                 entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
-                entity.Property(e => e.MontoBtc).HasColumnName("monto_btc");
+                entity.Property(e => e.Monto).HasColumnName("monto");
 
                 entity.Property(e => e.MontoTrx).HasColumnName("monto_trx");
 

@@ -78,7 +78,7 @@ namespace SuperCash.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime?>("Fecha")
+                    b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime")
                         .HasColumnName("fecha");
 
@@ -127,17 +127,17 @@ namespace SuperCash.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id_usuario");
 
-                    b.Property<double?>("MontoBtc")
-                        .HasColumnType("float")
-                        .HasColumnName("monto_btc");
+                    b.Property<string>("Id_transaccion")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("id_transaccion");
+
+                    b.Property<string>("Monto")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("monto");
 
                     b.Property<double?>("MontoTrx")
                         .HasColumnType("float")
                         .HasColumnName("monto_trx");
-
-                    b.Property<string>("id_transaccion")
-                       .HasColumnType("varchar(95)")
-                       .HasColumnName("id_transaccion");
 
                     b.HasKey("Id");
 

@@ -10,8 +10,8 @@ using SuperCash.Models;
 namespace SuperCash.Migrations
 {
     [DbContext(typeof(supercashContext))]
-    [Migration("20210316010548_IdentityDBUser")]
-    partial class IdentityDBUser
+    [Migration("20210319185221_Cambio Monto _1")]
+    partial class CambioMonto_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -80,7 +80,7 @@ namespace SuperCash.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime?>("Fecha")
+                    b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime")
                         .HasColumnName("fecha");
 
@@ -129,9 +129,13 @@ namespace SuperCash.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id_usuario");
 
-                    b.Property<double?>("MontoBtc")
-                        .HasColumnType("float")
-                        .HasColumnName("monto_btc");
+                    b.Property<string>("Id_transaccion")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("id_transaccion");
+
+                    b.Property<string>("Monto")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("monto");
 
                     b.Property<double?>("MontoTrx")
                         .HasColumnType("float")

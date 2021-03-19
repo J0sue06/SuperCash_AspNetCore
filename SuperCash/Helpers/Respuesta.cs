@@ -8,6 +8,7 @@ namespace SuperCash.Helpers
     public class Respuesta
     {
         public string Message { get; set; }
+        public string RedirectUrl { get; set; }
         public int Status { get; set; }
     }
 }
