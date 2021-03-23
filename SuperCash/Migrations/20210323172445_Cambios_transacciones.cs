@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SuperCash.Migrations
 {
-    public partial class CambioMonto_1 : Migration
+    public partial class Cambios_transacciones : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -61,8 +61,9 @@ namespace SuperCash.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     id_usuario = table.Column<int>(type: "int", nullable: true),
-                    monto = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    monto_trx = table.Column<double>(type: "float", nullable: true),
+                    depositado = table.Column<double>(type: "float", nullable: false),
+                    recibido = table.Column<double>(type: "float", nullable: false),
+                    tipo_pago = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     id_transaccion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     fecha = table.Column<DateTime>(type: "datetime", nullable: true),
                     estado = table.Column<string>(type: "varchar(95)", unicode: false, maxLength: 95, nullable: true)

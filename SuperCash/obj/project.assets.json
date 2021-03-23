@@ -5993,11 +5993,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\SuperCash\\SuperCash_AspNetCore\\SuperCash\\SuperCash.csproj",
+      "projectUniqueName": "D:\\SuperCash\\New folder\\SuperCash_AspNetCore\\SuperCash\\SuperCash.csproj",
       "projectName": "SuperCash",
-      "projectPath": "D:\\SuperCash\\SuperCash_AspNetCore\\SuperCash\\SuperCash.csproj",
+      "projectPath": "D:\\SuperCash\\New folder\\SuperCash_AspNetCore\\SuperCash\\SuperCash.csproj",
       "packagesPath": "C:\\Users\\mperez\\.nuget\\packages\\",
-      "outputPath": "D:\\SuperCash\\SuperCash_AspNetCore\\SuperCash\\obj\\",
+      "outputPath": "D:\\SuperCash\\New folder\\SuperCash_AspNetCore\\SuperCash\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mperez\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -6067,7 +6067,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.104\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

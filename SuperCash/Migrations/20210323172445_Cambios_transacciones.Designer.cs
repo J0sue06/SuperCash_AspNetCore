@@ -10,8 +10,8 @@ using SuperCash.Models;
 namespace SuperCash.Migrations
 {
     [DbContext(typeof(supercashContext))]
-    [Migration("20210319185221_Cambio Monto _1")]
-    partial class CambioMonto_1
+    [Migration("20210323172445_Cambios_transacciones")]
+    partial class Cambios_transacciones
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -115,6 +115,10 @@ namespace SuperCash.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<double>("Depositado")
+                        .HasColumnType("float")
+                        .HasColumnName("depositado");
+
                     b.Property<string>("Estado")
                         .HasMaxLength(95)
                         .IsUnicode(false)
@@ -133,13 +137,13 @@ namespace SuperCash.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("id_transaccion");
 
-                    b.Property<string>("Monto")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("monto");
-
-                    b.Property<double?>("MontoTrx")
+                    b.Property<double>("Recibido")
                         .HasColumnType("float")
-                        .HasColumnName("monto_trx");
+                        .HasColumnName("recibido");
+
+                    b.Property<string>("TipoPago")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("tipo_pago");
 
                     b.HasKey("Id");
 

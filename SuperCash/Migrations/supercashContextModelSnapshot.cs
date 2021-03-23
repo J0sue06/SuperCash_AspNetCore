@@ -113,6 +113,10 @@ namespace SuperCash.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<double>("Depositado")
+                        .HasColumnType("float")
+                        .HasColumnName("depositado");
+
                     b.Property<string>("Estado")
                         .HasMaxLength(95)
                         .IsUnicode(false)
@@ -131,13 +135,13 @@ namespace SuperCash.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("id_transaccion");
 
-                    b.Property<string>("Monto")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("monto");
-
-                    b.Property<double?>("MontoTrx")
+                    b.Property<double>("Recibido")
                         .HasColumnType("float")
-                        .HasColumnName("monto_trx");
+                        .HasColumnName("recibido");
+
+                    b.Property<string>("TipoPago")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("tipo_pago");
 
                     b.HasKey("Id");
 

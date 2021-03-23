@@ -109,9 +109,11 @@ namespace SuperCash.Models
 
                 entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
-                entity.Property(e => e.Monto).HasColumnName("monto");
+                entity.Property(e => e.Depositado).HasColumnName("depositado");
 
-                entity.Property(e => e.MontoTrx).HasColumnName("monto_trx");
+                entity.Property(e => e.Recibido).HasColumnName("recibido");
+
+                entity.Property(e => e.TipoPago).HasColumnName("tipo_pago");
 
                 entity.Property(e => e.Id_transaccion).HasColumnName("id_transaccion");
             });

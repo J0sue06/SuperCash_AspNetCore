@@ -29,31 +29,88 @@ namespace SuperCash.Controllers
             s_privkey = Configuration.GetConnectionString("s_privkey");
         }
 
+        public IActionResult Retiro(RetiroViewModel model)
+        {           
+            using (supercashContext db = new supercashContext())
+            {
+                if (ModelState.IsValid)
+                {
+                    var res = User.Claims.ToList();
+                    var ID = Convert.ToInt32(res[0].Value);
+
+                    var userWallet = (from w in db.Usuarios
+                                  where w.Id == ID
+                                  select new
+                                  {
+                                      w.Wallet
+                                  }).FirstOrDefault();
+
+                    CoinPaymentAPI api = new CoinPaymentAPI(s_privkey, s_pubkey);
+                    SortedList<string, string> parms = new SortedList<string, string>();
+                    dynamic informacionAPI = null;
+
+                    parms["amount"] = Convert.ToString(model.Retiro);
+                    parms["currency"] = "TRX";
+                    parms["address"] = userWallet.Wallet;                   
+
+                    var resp = api.CallAPI("create_withdrawal", parms);
+
+                    foreach (var item in resp)
+                    {
+                        if (item.Key != "ok")
+                        {
+                            dynamic jsonSerializer = JsonConvert.SerializeObject(item.Value);
+                            dynamic json = JsonConvert.DeserializeObject<dynamic>(jsonSerializer);
+
+                            informacionAPI = json;
+                        }
+                    }
+
+                    return Ok(model);
+                }
+                else
+                {
+                    var errores = ModelState.Values.SelectMany(v => v.Errors.Select(b => b.ErrorMessage));
+
+                    return Ok(new { status = 200, message = errores });
+                }
+            }          
+
+        }
+
         public async Task<IActionResult> Deposito(DepositoViewModel model, string Moneda)
-        {   
+        {
             CoinPaymentAPI api = new CoinPaymentAPI(s_privkey, s_pubkey);
+            Respuesta _return = new Respuesta();
 
-            Respuesta _return = new Respuesta();            
-
+            SortedList<string, string> parms = new SortedList<string, string>();
             dynamic informacionAPI = null;
+
+            double _monto = 0;
+            string _moneda = string.Empty;
 
             var res = User.Claims.ToList();
             var ID = Convert.ToInt32(res[0].Value);
             var Email = res[1].Value;
-
-            SortedList<string, string> parms = new SortedList<string, string>();
 
             double _feePay = 0.005;
 
             double _sub = model.monto * _feePay;
             double _fee = model.monto + _sub;
 
-            var valorParseado = Truncate(_fee, 8);
-            var valorString = Convert.ToString(valorParseado);
+            if (Moneda == "TRX")
+            {
+                _moneda = "TRX";                
+            }
 
-            parms["amount"] = Convert.ToString(_fee); 
+            if (Moneda == "BTC")
+            {
+                _moneda = "BTC";                
+            }            
+
+            parms["amount"] = _fee.ToString("N9");
             parms["currency1"] = "TRX";
-            parms["currency2"] = "TRX";
+            parms["currency2"] = _moneda;
             parms["buyer_email"] = Email;
 
             var resp = api.CallAPI("create_transaction", parms);
@@ -71,11 +128,22 @@ namespace SuperCash.Controllers
 
             Transaccione _model = new Transaccione();
 
+            if (Moneda == "TRX")
+            {
+                _monto = model.monto;
+            }
+
+            if (Moneda == "BTC")
+            {
+                _monto = informacionAPI.amount;
+            }
+
             _model.Estado = "Pendiente";
             _model.Fecha = DateTime.Now;
             _model.IdUsuario = ID;
-            _model.Monto = model.monto + Moneda;
-            _model.MontoTrx = informacionAPI.amount;
+            _model.Depositado = model.monto;
+            _model.Recibido = _monto;
+            _model.TipoPago = _moneda;
             _model.Id_transaccion = informacionAPI.txn_id;
 
             using (supercashContext db = new supercashContext())

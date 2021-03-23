@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace SuperCash.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -34,8 +35,7 @@ namespace SuperCash.Controllers
             s_pubkey = Configuration.GetConnectionString("s_pubkey");
             s_privkey = Configuration.GetConnectionString("s_privkey");
         }
-
-        [Authorize]
+        
         public async Task<IActionResult> Index()
         {
             await VerificarDepositos2();

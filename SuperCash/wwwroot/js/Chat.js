@@ -2,26 +2,13 @@
 
 $(document).ready(() => {
     let connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-    let ID = $('#ID').html(); 
 
     connection.on("Update", function (res) {
         setTimeout(() => {
             UpdateInfo();
         },2000)
         
-    });
-
-    //connection.on("ActualizarBalance", function (res) { 
-    //    const { id, balance } = res;
-    //    if (ID == id) {
-    //        console.log(balance);
-    //        $('#Balance').html(`${balance} TRX`);
-    //    }
-    //});
-
-    //connection.on("Pagos", function (res) {        
-    //    PagosRecientes();      
-    //});
+    });    
 
     connection.start().then(function () {
         //console.log(connection);
@@ -29,12 +16,81 @@ $(document).ready(() => {
         return console.error(err.toString());
     });
 
+    $('#withdraw').click((e) => {
+        const retiro = $('#MontoRetiro').val();
+
+        if (retiro == '') {
+            console.log("Validacion");
+            $('#MontoRetiro').focus();
+            return;
+        }
+
+        const _valor = parseFloat(retiro);
+
+        const feePay = 0.005;
+
+        const sub = _valor * feePay;
+        const fee = _valor + sub;
+        const realFee = RedondearValor(fee);
+
+        Swal.fire({
+            title: 'Confirmacion de Retiro',
+            html: `<h2>Monto ${retiro} TRX </h2>                   
+                   <hr/>
+                   <h2>Cuota de procesador de pago 0.2 TRX</h2> 
+                    `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, hazlo!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                const obj = {
+                    Retiro: retiro
+                };
+
+                $.ajax({
+                    url: '/Transacciones/Retiro',
+                    method: 'POST',
+                    data: { model: obj },
+                    success: (res) => {
+                        //const { status, redirectUrl } = res;
+                        //if (status == 200) {
+                        //    Swal.fire({
+                        //        position: 'top-end',
+                        //        icon: 'success',
+                        //        title: 'Retirado correctamente!',
+                        //        showConfirmButton: false,
+                        //        timer: 1500
+                        //    });
+                        //    $('#modalRetiros').modal('hide');
+                        //    setTimeout(() => {
+                        //        document.location.href = redirectUrl;
+                        //    }, 1500)
+                        //}
+                         console.log(res);
+                    },
+                    error: (err) => {
+                        console.error(err);
+                    }
+                });
+
+            }
+        });
+
+
+    });
+
     $("#deposit").click(function (e) {
         e.preventDefault();
 
         const _monto = $('#MontoDeposito').val();
 
-        if (_monto <= 0 ) {
+        const payMethod = $("input[type='radio'][name='Pay']:checked").val();        
+
+        if (_monto <= 0 || payMethod == undefined) {
             console.log("Validacion");
             return;
         }
@@ -45,15 +101,14 @@ $(document).ready(() => {
 
         const sub = _valor * feePay;
         const fee = _valor + sub;
-        const realFee = RedondearValor(fee);
-        console.log(realFee);
+        const realFee = RedondearValor(fee);        
 
         Swal.fire({
             title: 'Confirmacion de Deposito',
-            html: `<h2>Monto ${_monto} BTC </h2>
+            html: `<h2>Monto ${_monto} TRX </h2>
                    <h2>Procesador de pago</h2> (0.5%)
                    <hr/>
-                   <h3>Total</h3>${realFee} BTC
+                   <h3>Total</h3>${realFee} TRX
                     `,
             icon: 'warning',
             showCancelButton: true,
@@ -70,7 +125,7 @@ $(document).ready(() => {
                 $.ajax({
                     url: '/Transacciones/Deposito',
                     method: 'POST',
-                    data: { model: obj, Moneda: "TRX" },
+                    data: { model: obj, Moneda: payMethod },
                     success: (res) => {
                         const { status, redirectUrl } = res;
                         if (status == 200) {

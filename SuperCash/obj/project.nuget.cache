@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/sUY6qgJs0yhB+sRGIFYkMiuJn2FhlI7Mo0KR1o8Nn1uUHrL4cXZN927ZY/1K3IbmHUVDDksDbBi6NGc9DL/Tg==",
+  "dgSpecHash": "DNKh6CJwXhRp/59zq+XMz7A3gTDILrJq/F5LMtDs5mwRzzOJPFwt6iDi7HrgtJSg5ki7R8ZQXIkaUmm8sm/w4Q==",
   "success": true,
-  "projectFilePath": "D:\\SuperCash\\SuperCash_AspNetCore\\SuperCash\\SuperCash.csproj",
+  "projectFilePath": "D:\\SuperCash\\New folder\\SuperCash_AspNetCore\\SuperCash\\SuperCash.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mperez\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\mperez\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\5.0.4\\microsoft.aspnetcore.cryptography.internal.5.0.4.nupkg.sha512",
