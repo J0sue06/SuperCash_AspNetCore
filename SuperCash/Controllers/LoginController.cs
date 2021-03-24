@@ -47,7 +47,7 @@ namespace SuperCash.Controllers
                         var claimPrincipal = new ClaimsPrincipal(claimIdenties);
                         var authenticationManager = Request.HttpContext;                      
 
-                        await authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal, new AuthenticationProperties() { IsPersistent = false });
+                        await authenticationManager.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal, new AuthenticationProperties() {AllowRefresh = false, IsPersistent = true, RedirectUri = "/Login" });
 
                         _return.Status = 200;
                         var res = claimIdenties.Claims;
@@ -84,7 +84,7 @@ namespace SuperCash.Controllers
             // Sign Out.  
             await authenticationManager.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return Ok();
+            return Ok(new { status = 200, url = "/Home" });
         }
 
 

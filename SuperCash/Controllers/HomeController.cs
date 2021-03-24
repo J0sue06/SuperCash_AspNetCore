@@ -54,6 +54,9 @@ namespace SuperCash.Controllers
 
         public IActionResult Informaciones(int ID)
         {
+            List<MembersViewModel> top = new List<MembersViewModel>();
+            
+
             using (supercashContext db = new supercashContext())
             {
                 var datosUser = (from u in db.Usuarios
@@ -83,16 +86,143 @@ namespace SuperCash.Controllers
                 dynamic jsonSerializerIndex = JsonConvert.SerializeObject(datosUser);
                 dynamic jsonInformaciones = JsonConvert.DeserializeObject<dynamic>(jsonSerializerIndex);
 
-                var pagos = Pagos();
-                var directos = db.Usuarios.Count(u => u.IdPadre == ID);
+                var pagos = Pagos();                
+
+                var directos = db.Usuarios.Where(u => u.IdPadre == ID).ToList();
+
+                (var cantidadTeam, var topTeam) = ReferidosEquipoUpdate(ID);
+
+                foreach (var item in topTeam)
+                {
+                    MembersViewModel model = new MembersViewModel();
+                    model.ID = item.ID;
+                    model.Cantidad = item.Cantidad;
+
+                    top.Add(model);
+                }
+
+                foreach (var item in directos)
+                {
+                    MembersViewModel model = new MembersViewModel();
+                    model.ID = item.Id;
+                    model.Cantidad = (double)(item.GananciaDirecta + item.GananciaEquipo);
+
+                    top.Add(model);
+                }
+
+                var topMembers = (from item in top
+                              where item.Cantidad > 0
+                              orderby item.Cantidad descending
+                              group item by new { item.ID, item.Cantidad } into g                               
+                              select new 
+                              {
+                                  ID = g.Key.ID,
+                                  Cantidad = g.Key.Cantidad
+                              }).Take(3).ToList();
+
+                dynamic jsonSerializerMembers = JsonConvert.SerializeObject(topMembers);
+                dynamic jsonMembers = JsonConvert.DeserializeObject<dynamic>(jsonSerializerMembers);
+
 
                 ViewBag.Balance = balance__.ToString("N9");
                 ViewBag.Pagos = pagos;                
-                ViewBag.Directos = directos;
+                ViewBag.Directos = directos.Count();
+                ViewBag.Equipo = cantidadTeam;
+
+                ViewBag.TopMembers = jsonMembers;
 
                 return Ok(jsonInformaciones);
             }
         }
+
+        public int ReferidosEquipo(int ID)
+        {
+            using (supercashContext db = new supercashContext())
+            {
+                int idUsuario = 0;
+                int cantidad = 0;
+
+                idUsuario = ID;
+
+                for (int i = 0; i < 1; i++)
+                {
+                    i = i - 1;
+
+                    if (idUsuario > 0)
+                    {
+                        var idReferido = (from r in db.Usuarios
+                                          where r.IdPadre == idUsuario
+                                          select new
+                                          {
+                                              r.Id
+                                          }).FirstOrDefault();
+
+                        if (idReferido != null)
+                        {
+                            idUsuario = idReferido.Id;
+                            cantidad += 1;
+                        }
+                        else
+                        {                           
+                            Console.WriteLine($"No mas refedios en equipo, se encontro un total de {cantidad}");
+                            break;
+                        }
+                    }
+                }
+
+                dynamic jsonSerializerIndex = JsonConvert.SerializeObject(cantidad);
+                dynamic json = JsonConvert.DeserializeObject<dynamic>(jsonSerializerIndex);
+
+                return cantidad;
+            }
+        }
+
+
+        public (int cantidad, List<MembersViewModel> top) ReferidosEquipoUpdate(int ID)
+        {
+            using (supercashContext db = new supercashContext())
+            {
+                List<MembersViewModel> top = new List<MembersViewModel>();
+                
+
+                int idUsuario = 0;
+                int cantidad = 0;
+
+                idUsuario = ID;
+
+                for (int i = 0; i < 1; i++)
+                {
+                    i = i - 1;
+
+                    if (idUsuario > 0)
+                    {
+                        var idReferido = (from r in db.Usuarios
+                                          where r.IdPadre == idUsuario
+                                          select r).FirstOrDefault();
+
+                        if (idReferido != null)
+                        {
+                            idUsuario = idReferido.Id;
+                            cantidad += 1;
+
+                            MembersViewModel model = new MembersViewModel();
+                            model.ID = idUsuario;
+                            model.Cantidad = (double)(idReferido.GananciaDirecta + idReferido.GananciaEquipo);
+
+                            top.Add(model);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"No mas refedios en equipo, se encontro un total de {cantidad}");
+                            break;
+                        }
+                    }
+                }                
+
+                return (cantidad: cantidad, top: top);
+            }
+        }
+
 
         public IActionResult Pagos()
         {
@@ -266,7 +396,9 @@ namespace SuperCash.Controllers
 
                 var directos = db.Usuarios.Count(u => u.IdPadre == ID);
 
-                return Ok(new { InfoUser = userInfo, Payments = pagosRecientes, Balance = userBalance, Directos = directos });
+                var referidosEquipo = ReferidosEquipoUpdate(ID);               
+
+                return Ok(new { InfoUser = userInfo, Payments = pagosRecientes, Balance = userBalance, Directos = directos, Equipo = referidosEquipo });
             }
         }
 

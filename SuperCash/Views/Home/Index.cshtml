@@ -6,6 +6,8 @@
     var _balance = ViewBag.Balance;
     var _pagos = ViewBag.Pagos.Value;
     var directoReferidos = ViewBag.Directos;
+    var equipoReferidos = ViewBag.Equipo;
+    var topMembers = ViewBag.TopMembers;
 }
 
 <!--component-->
@@ -145,14 +147,14 @@
                         <h3>Direct</h3>
                         <div class="direct-affiliates d-flex align-items-center">
                             <i class="bi bi-person"></i>
-                            <h1 class="accent" id="affiliateDirect">@directoReferidos</h1>
+                            <h1 class="accent" id="affiliateDirect">&nbsp; @directoReferidos</h1>
                         </div>
                     </div>
                     <div class="col-lg-3">
                         <h3>Team</h3>
                         <div class="direct-affiliates d-flex align-items-center">
                             <i class="bi bi-people"></i>
-                            <h1 class="accent">789</h1>
+                            <h1 class="accent" id="affiliateTeam">&nbsp; @equipoReferidos</h1>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -166,18 +168,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th scope="row">89</th>
-                                        <td class="text-right">156,000 TRX</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">114</th>
-                                        <td class="text-right">89,780 TRX</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">39</th>
-                                        <td class="text-right">38,550 TRX</td>
-                                    </tr>
+                                    @foreach (var top in topMembers)
+                                    {
+                                        <tr>
+                                            <th scope="row">@top.ID</th>
+                                            <td class="text-right">@top.Cantidad TRX</td>
+                                        </tr>
+                                    }                                  
                                 </tbody>
                             </table>
                         </div>
@@ -294,6 +291,4 @@
 
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="~/js/Chat.js"></script>

@@ -247,15 +247,32 @@ namespace SuperCash.Controllers
 
                     db.Usuarios.Add(Userinfo);
                     db.Entry(Userinfo).State = EntityState.Modified;
-
-                    _pago.Fecha = DateTime.Now;
-                    _pago.IdUsuario = ID;
-                    _pago.IdPadre = Userinfo.IdPadre;
-                    _pago.MontoTrx = valorADepositar;
-                    _pago.TipoPago = "Direct";                    
-
-                    db.Pagos.Add(_pago);                    
                     await db.SaveChangesAsync();
+
+                    // CODIGOS PARA OBTENER DATOS DEL PADRE
+                    var infoPadre = (from d in db.Usuarios
+                                     where d.Id == Userinfo.IdPadre
+                                     select d).FirstOrDefault();
+
+                    if (infoPadre.NivelDirecto >= proximo_nivel)
+                    {
+                        _pago.Fecha = DateTime.Now;
+                        _pago.IdUsuario = ID;
+                        _pago.IdPadre = Userinfo.IdPadre;
+                        _pago.MontoTrx = valorADepositar;
+                        _pago.TipoPago = "Direct";
+
+                        db.Pagos.Add(_pago);
+                        await db.SaveChangesAsync();
+
+                        // CODIGOS PARA ACTUALIZAR BALANCE Y GANANCIA DE EQUIPO
+                        infoPadre.Balance += valorADepositar;
+                        infoPadre.GananciaDirecta += valorADepositar;
+
+                        db.Usuarios.Add(infoPadre);
+                        db.Entry(infoPadre).State = EntityState.Modified;
+                        await db.SaveChangesAsync();
+                    }                    
 
                     await _hub.Clients.All.SendAsync("Update");
                     _return.Status = 200;

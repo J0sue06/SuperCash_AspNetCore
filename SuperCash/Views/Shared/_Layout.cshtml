@@ -39,16 +39,16 @@
                             <a class="nav-link" href="#">Settings</a>
                         </li>
                         <!--<li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown
-                          </a>
-                          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                          </div>
-                        </li>-->
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                      </div>
+                    </li>-->
                     </ul>
 
                 </div>
@@ -60,7 +60,7 @@
                         </select>
                     </div>
                     <div class="logout">
-                        <a class="nav-link" href="#">Logout <i class="bi bi-box-arrow-right"></i></a>
+                        <button class="nav-link" type="button" id="logOut">Logout <i class="bi bi-box-arrow-right"></i></button>
                     </div>
                 </div>
             </nav>
@@ -112,9 +112,14 @@
         </footer>
         <!--footer-->
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+        <script src="~/js/signalr/dist/browser/signalr.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        @RenderSection("Scripts", required: false)
+
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+        <script src="~/js/LogOut.js"></script>
+        
     </div>
 </body>
 </html>

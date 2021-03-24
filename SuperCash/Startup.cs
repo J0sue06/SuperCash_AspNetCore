@@ -44,7 +44,7 @@ namespace SuperCash
             }).AddCookie(options =>
             {
                 options.LoginPath = new PathString("/Login");
-                options.ExpireTimeSpan = TimeSpan.FromHours(2);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
             });
         }
 

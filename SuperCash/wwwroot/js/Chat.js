@@ -297,17 +297,17 @@ $(document).ready(() => {
         $.ajax({
             url: '/Home/UpdateInfo',
             method: 'GET',
-            success: (res) => {
-                const { infoUser, balance, payments, directos } = res;
-                console.log(res);
+            success: (res) => {                
+                const { infoUser, balance, payments, directos, equipo } = res;   
                 const { costoDirecto, costoEquipo, nivelDirecto, nivelEquipo, rango } = infoUser;
                 $('#Balance').html(`${balance} TRX`);
                 $('#Rank').html(rango);
-                $('#DirectLevel').html(`LEVEL ${nivelDirecto}`);
+                $('#DirectLevel').html(`LEVEL ${nivelDirecto}`); 
                 $('#PayDirect').html(`${costoDirecto} TRX`);
                 $('#TeamLevel').html(`LEVEL ${nivelEquipo}`);
                 $('#PayTeam').html(`${costoEquipo} TRX`);
-                $('#affiliateDirect').html(directos);
+                $('#affiliateDirect').html(`&nbsp; ${directos}`);
+                $('#affiliateTeam').html(`&nbsp; ${equipo}`);
                
                 let pagos = '<tr>';    
                 $.each(payments, function (key, value) {
