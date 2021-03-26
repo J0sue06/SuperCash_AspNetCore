@@ -34,7 +34,7 @@ namespace SuperCash
             services.AddSignalR();
 
             services.AddDbContext<supercashContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("trabajo")));
+            options.UseSqlServer(Configuration.GetConnectionString("casa")));
 
             services.AddAuthentication(options =>
             {
